@@ -1,426 +1,990 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>NexCrypto — Trade Smarter, Earn More</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CryptoTrade+ Airdrop</title>
+<script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.0/dist/ethers.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,sans-serif;scroll-behavior:smooth}
-body{background:#0a0e1a;color:#e0e6f0;overflow-x:hidden}
-::-webkit-scrollbar{width:8px}
-::-webkit-scrollbar-track{background:#0a0e1a}
-::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#3b82f6,#8b5cf6);border-radius:4px}
-
-.bg-glow{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 20% 30%,rgba(59,130,246,.12),transparent 40%),radial-gradient(circle at 80% 70%,rgba(139,92,246,.12),transparent 40%),radial-gradient(circle at 50% 50%,rgba(236,72,153,.08),transparent 50%);animation:bgPulse 8s ease-in-out infinite}
-@keyframes bgPulse{0%,100%{opacity:1}50%{opacity:.6}}
-
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 5%;background:rgba(10,14,26,.7);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.05)}
-.logo{font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#3b82f6,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.5px}
-.nav-links{display:flex;gap:2rem;list-style:none}
-.nav-links a{color:#94a3b8;text-decoration:none;font-weight:500;transition:color .3s;font-size:.95rem}
-.nav-links a:hover{color:#3b82f6}
-.nav-right{display:flex;align-items:center;gap:.75rem}
-.connect-btn{background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;border:none;padding:.6rem 1.4rem;border-radius:50px;font-weight:600;cursor:pointer;transition:all .3s;font-size:.9rem;box-shadow:0 4px 15px rgba(59,130,246,.3)}
-.connect-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(59,130,246,.5)}
-.wallet-connected{display:flex;align-items:center;gap:.5rem;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);padding:.5rem 1rem;border-radius:50px;color:#10b981;font-size:.85rem;font-weight:600;cursor:pointer;position:relative}
-.wallet-connected .dot{width:8px;height:8px;background:#10b981;border-radius:50%;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-.wallet-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:#131a2b;border:1px solid rgba(255,255,255,.1);border-radius:12px;min-width:220px;padding:.5rem;box-shadow:0 10px 30px rgba(0,0,0,.5);display:none;z-index:200}
-.wallet-dropdown.active{display:block}
-.wallet-dropdown .dd-item{padding:.7rem .9rem;border-radius:8px;cursor:pointer;font-size:.85rem;color:#cbd5e1;transition:all .2s;display:flex;align-items:center;gap:.6rem}
-.wallet-dropdown .dd-item:hover{background:rgba(59,130,246,.1);color:#3b82f6}
-.wallet-dropdown .dd-divider{height:1px;background:rgba(255,255,255,.05);margin:.3rem 0}
-.menu-toggle{display:none;background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer}
-
-.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:8rem 5% 4rem;text-align:center;position:relative}
-.hero-content{max-width:900px;position:relative;z-index:2}
-.hero-badge{display:inline-block;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);padding:.4rem 1rem;border-radius:50px;font-size:.8rem;color:#60a5fa;margin-bottom:1.5rem;letter-spacing:.5px}
-.hero h1{font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;line-height:1.1;margin-bottom:1.5rem;letter-spacing:-2px}
-.hero h1 .gradient{background:linear-gradient(135deg,#3b82f6,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{font-size:1.15rem;color:#94a3b8;margin-bottom:2.5rem;max-width:600px;margin-left:auto;margin-right:auto;line-height:1.6}
-.hero-buttons{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
-.btn-primary{background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;padding:.9rem 2.2rem;border-radius:50px;border:none;font-weight:600;cursor:pointer;font-size:1rem;transition:all .3s;box-shadow:0 4px 20px rgba(59,130,246,.4);text-decoration:none;display:inline-block}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(59,130,246,.6)}
-.btn-secondary{background:transparent;color:#e0e6f0;padding:.9rem 2.2rem;border-radius:50px;border:1.5px solid rgba(255,255,255,.2);font-weight:600;cursor:pointer;font-size:1rem;transition:all .3s;text-decoration:none;display:inline-block}
-.btn-secondary:hover{border-color:#3b82f6;background:rgba(59,130,246,.05)}
-
-.ticker-wrap{background:rgba(19,26,43,.5);border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05);padding:1rem 0;overflow:hidden;position:relative}
-.ticker{display:flex;gap:3rem;animation:scroll 30s linear infinite;white-space:nowrap}
-@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.ticker-item{display:flex;align-items:center;gap:.5rem;font-size:.9rem}
-.ticker-item .name{color:#94a3b8;font-weight:500}
-.ticker-item .price{color:#e0e6f0;font-weight:600}
-.ticker-item .change{font-size:.8rem;font-weight:600;padding:.1rem .5rem;border-radius:4px}
-.ticker-item .up{color:#10b981;background:rgba(16,185,129,.1)}
-.ticker-item .down{color:#ef4444;background:rgba(239,68,68,.1)}
-
-.stats{padding:4rem 5%;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;max-width:1200px;margin:0 auto}
-.stat-card{text-align:center;padding:1.5rem;background:rgba(19,26,43,.4);border:1px solid rgba(255,255,255,.05);border-radius:16px;transition:all .3s}
-.stat-card:hover{transform:translateY(-5px);border-color:rgba(59,130,246,.3)}
-.stat-num{font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.3rem}
-.stat-label{color:#94a3b8;font-size:.9rem}
-
-.section-title{text-align:center;font-size:2.2rem;font-weight:700;margin-bottom:.5rem}
-.section-sub{text-align:center;color:#94a3b8;margin-bottom:3rem;font-size:1rem}
-
-.market{padding:5rem 5%;max-width:1200px;margin:0 auto}
-.market-table{width:100%;border-collapse:collapse;background:rgba(19,26,43,.3);border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.05)}
-.market-table th,.market-table td{padding:1rem 1.2rem;text-align:left}
-.market-table th{background:rgba(255,255,255,.02);color:#94a3b8;font-weight:600;font-size:.85rem;text-transform:uppercase;letter-spacing:.5px}
-.market-table tr{border-bottom:1px solid rgba(255,255,255,.03);transition:background .2s}
-.market-table tr:hover{background:rgba(59,130,246,.05)}
-.market-table tr:last-child{border-bottom:none}
-.coin-cell{display:flex;align-items:center;gap:.8rem}
-.coin-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:.85rem}
-.coin-name{font-weight:600}
-.coin-symbol{color:#94a3b8;font-size:.8rem;text-transform:uppercase}
-.up-color{color:#10b981;font-weight:600}
-.down-color{color:#ef4444;font-weight:600}
-
-.features{padding:5rem 5%;max-width:1200px;margin:0 auto}
-.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem}
-.feature-card{background:rgba(19,26,43,.4);border:1px solid rgba(255,255,255,.05);border-radius:20px;padding:2rem;transition:all .4s;position:relative;overflow:hidden}
-.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#3b82f6,#8b5cf6,#ec4899);transform:scaleX(0);transition:transform .4s;transform-origin:left}
-.feature-card:hover::before{transform:scaleX(1)}
-.feature-card:hover{transform:translateY(-8px);border-color:rgba(59,130,246,.2);box-shadow:0 20px 40px rgba(0,0,0,.3)}
-.feature-icon{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1.2rem}
-.feature-icon.f1{background:rgba(59,130,246,.15);color:#3b82f6}
-.feature-icon.f2{background:rgba(139,92,246,.15);color:#8b5cf6}
-.feature-icon.f3{background:rgba(236,72,153,.15);color:#ec4899}
-.feature-icon.f4{background:rgba(16,185,129,.15);color:#10b981}
-.feature-icon.f5{background:rgba(245,158,11,.15);color:#f59e0b}
-.feature-icon.f6{background:rgba(239,68,68,.15);color:#ef4444}
-.feature-card h3{font-size:1.2rem;margin-bottom:.6rem}
-.feature-card p{color:#94a3b8;line-height:1.6;font-size:.9rem}
-
-.newsletter{padding:5rem 5%;max-width:600px;margin:0 auto;text-align:center}
-.newsletter-box{background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(139,92,246,.1));border:1px solid rgba(59,130,246,.2);border-radius:24px;padding:3rem 2rem}
-.newsletter h2{font-size:1.8rem;margin-bottom:.8rem}
-.newsletter p{color:#94a3b8;margin-bottom:2rem}
-.newsletter-form{display:flex;gap:.5rem;max-width:400px;margin:0 auto}
-.newsletter-form input{flex:1;padding:.8rem 1.2rem;border-radius:50px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.2);color:#fff;font-size:.95rem;outline:none;transition:border .3s}
-.newsletter-form input:focus{border-color:#3b82f6}
-
-footer{padding:3rem 5% 2rem;border-top:1px solid rgba(255,255,255,.05);text-align:center;color:#64748b;font-size:.85rem;margin-top:3rem}
-.footer-links{display:flex;gap:1.5rem;justify-content:center;margin-bottom:1rem;flex-wrap:wrap}
-.footer-links a{color:#64748b;text-decoration:none;transition:color .3s}
-.footer-links a:hover{color:#3b82f6}
-
-.toast{position:fixed;bottom:2rem;right:2rem;background:#131a2b;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1rem 1.5rem;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:1000;display:flex;align-items:center;gap:.8rem;transform:translateY(150%);transition:transform .4s cubic-bezier(.4,0,.2,1);max-width:350px}
-.toast.show{transform:translateY(0)}
-.toast-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
-.toast.success .toast-icon{background:rgba(16,185,129,.2);color:#10b981}
-.toast.error .toast-icon{background:rgba(239,68,68,.2);color:#ef4444}
-.toast.info .toast-icon{background:rgba(59,130,246,.2);color:#3b82f6}
-.toast-msg{font-size:.9rem;color:#e0e6f0}
-
-@media(max-width:768px){
-.nav-links{position:fixed;top:0;right:-100%;flex-direction:column;background:#0a0e1a;width:70%;height:100vh;padding:5rem 2rem;transition:right .3s;border-left:1px solid rgba(255,255,255,.05)}
-.nav-links.active{right:0}
-.menu-toggle{display:block}
-.hero h1{font-size:2.2rem}
-.hero p{font-size:1rem}
-.stats{grid-template-columns:repeat(2,1fr);padding:3rem 5%}
-.market{padding:3rem 5%;overflow-x:auto}
-.market-table{min-width:600px}
-}
+  *{font-family:'Inter',sans-serif}
+  body{background:#0a0e1a;color:#e5e7eb;overflow-x:hidden}
+  .gradient-bg{background:linear-gradient(135deg,#1e1b4b 0%,#0a0e1a 50%,#1e1b4b 100%)}
+  .card{background:rgba(30,27,75,.4);backdrop-filter:blur(20px);border:1px solid rgba(139,92,246,.2);border-radius:16px}
+  .glow{box-shadow:0 0 40px rgba(139,92,246,.3)}
+  .btn-primary{background:linear-gradient(135deg,#8b5cf6,#3b82f6);transition:all .3s}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(139,92,246,.4)}
+  .pulse-dot{animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+  .fade-in{animation:fadeIn .5s}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .price-up{color:#10b981}
+  .price-down{color:#ef4444}
+  .nav-item{transition:all .3s;cursor:pointer}
+  .nav-item:hover,.nav-item.active{background:rgba(139,92,246,.2);border-left:3px solid #8b5cf6}
+  .task-check{transition:all .3s}
+  .task-check:hover{transform:scale(1.02)}
+  .scrollbar::-webkit-scrollbar{width:6px}
+  .scrollbar::-webkit-scrollbar-track{background:rgba(0,0,0,.2)}
+  .scrollbar::-webkit-scrollbar-thumb{background:#8b5cf6;border-radius:3px}
+  input,select,textarea{background:rgba(15,15,35,.6);border:1px solid rgba(139,92,246,.3);color:#e5e7eb;border-radius:8px;padding:8px 12px;width:100%}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:#8b5cf6;box-shadow:0 0 0 3px rgba(139,92,246,.2)}
+  .modal{background:rgba(0,0,0,.8);backdrop-filter:blur(8px)}
 </style>
 </head>
-<body>
-<div class="bg-glow"></div>
+<body class="min-h-screen">
 
-<nav>
-  <div class="logo">NexCrypto</div>
-  <ul class="nav-links" id="navLinks">
-    <li><a href="#home">Home</a></li>
-    <li><a href="#market">Market</a></li>
-    <li><a href="#features">Features</a></li>
-    <li><a href="#newsletter">Newsletter</a></li>
-  </ul>
-  <div class="nav-right">
-    <button id="connectBtn" class="connect-btn" onclick="connectWallet()">Connect Wallet</button>
-    <div id="walletConnected" class="wallet-connected" style="display:none" onclick="toggleDropdown()">
-      <span class="dot"></span>
-      <span id="walletAddr">0x0000...0000</span>
-      <span style="font-size:.7rem;opacity:.7">▼</span>
-      <div class="wallet-dropdown" id="walletDropdown">
-        <div class="dd-item" onclick="event.stopPropagation();copyAddress()">📋 Copy Address</div>
-        <div class="dd-item" onclick="event.stopPropagation();viewOnExplorer()">🔍 View on Explorer</div>
-        <div class="dd-divider"></div>
-        <div class="dd-item" onclick="event.stopPropagation();disconnectWallet()" style="color:#ef4444">⏏️ Disconnect</div>
-      </div>
+<!-- ==================== LOGIN SCREEN ==================== -->
+<div id="loginScreen" class="min-h-screen gradient-bg flex items-center justify-center p-4">
+  <div class="card p-8 w-full max-w-md glow fade-in">
+    <div class="text-center mb-8">
+      <div class="text-5xl mb-3">⚡</div>
+      <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">CryptoTrade+</h1>
+      <p class="text-gray-400 text-sm mt-2">Trading + Airdrop Platform</p>
     </div>
-    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-  </div>
-</nav>
 
-<section class="hero" id="home">
-  <div class="hero-content">
-    <span class="hero-badge">🚀 Platform Crypto #1 di Indonesia</span>
-    <h1>Trade Crypto dengan <span class="gradient">Kepercayaan Penuh</span></h1>
-    <p>Platform trading crypto paling aman dan cepat. Akses 500+ aset digital dengan likuiditas tinggi dan biaya terendah di industri.</p>
-    <div class="hero-buttons">
-      <a href="trading.html" class="btn-primary">Mulai Trading</a>
-      <a href="#features" class="btn-secondary">Pelajari Lebih Lanjut</a>
+    <button onclick="connectWallet()" class="w-full btn-primary text-white font-semibold py-3 rounded-xl mb-3 flex items-center justify-center gap-2">
+      <span>🦊</span> Connect Web3 Wallet
+    </button>
+
+    <div class="flex items-center my-4">
+      <div class="flex-1 h-px bg-gray-700"></div>
+      <span class="px-3 text-gray-500 text-sm">ATAU</span>
+      <div class="flex-1 h-px bg-gray-700"></div>
     </div>
-  </div>
-</section>
 
-<div class="ticker-wrap">
-  <div class="ticker" id="ticker"></div>
+    <div class="space-y-3">
+      <input type="email" id="emailInput" placeholder="email@gmail.com" class="w-full">
+      <input type="password" id="passwordInput" placeholder="Password" class="w-full">
+      <button onclick="loginGmail()" class="w-full bg-white text-gray-800 font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-100">
+        <span>📧</span> Login dengan Gmail
+      </button>
+    </div>
+
+    <p class="text-xs text-gray-500 text-center mt-6">Belum punya akun? Login otomatis terdaftar sebagai user baru.</p>
+  </div>
 </div>
 
-<section class="stats">
-  <div class="stat-card"><div class="stat-num" data-target="2.4">$2.4B</div><div class="stat-label">Volume 24 Jam</div></div>
-  <div class="stat-card"><div class="stat-num" data-target="500">500+</div><div class="stat-label">Aset Digital</div></div>
-  <div class="stat-card"><div class="stat-num" data-target="1.2">1.2M+</div><div class="stat-label">Pengguna Aktif</div></div>
-  <div class="stat-card"><div class="stat-num" data-target="99.9">99.9%</div><div class="stat-label">Uptime Server</div></div>
-</section>
+<!-- ==================== MAIN APP ==================== -->
+<div id="mainApp" class="hidden flex min-h-screen">
+  
+  <!-- SIDEBAR -->
+  <aside class="w-64 card m-3 p-4 hidden md:block">
+    <div class="flex items-center gap-2 mb-8">
+      <span class="text-2xl">⚡</span>
+      <span class="font-bold text-lg">CryptoTrade+</span>
+    </div>
+    <nav class="space-y-1">
+      <div onclick="showPage('dashboard')" class="nav-item active p-3 rounded-lg flex items-center gap-3" data-page="dashboard">
+        <span>📊</span> Dashboard
+      </div>
+      <div onclick="showPage('markets')" class="nav-item p-3 rounded-lg flex items-center gap-3" data-page="markets">
+        <span>📈</span> Markets
+      </div>
+      <div onclick="showPage('trade')" class="nav-item p-3 rounded-lg flex items-center gap-3" data-page="trade">
+        <span>💱</span> Trade
+      </div>
+      <div onclick="showPage('airdrop')" class="nav-item p-3 rounded-lg flex items-center gap-3" data-page="airdrop">
+        <span>🎁</span> Airdrop
+      </div>
+      <div onclick="showPage('admin')" class="nav-item p-3 rounded-lg flex items-center gap-3" data-page="admin">
+        <span>⚙️</span> Admin
+      </div>
+    </nav>
+    <div class="mt-8 p-3 rounded-lg bg-purple-900/30 border border-purple-500/30">
+      <p class="text-xs text-gray-400">Points</p>
+      <p class="text-2xl font-bold text-purple-400" id="sidebarPoints">0</p>
+    </div>
+  </aside>
 
-<section class="market" id="market">
-  <h2 class="section-title">Market Overview</h2>
-  <p class="section-sub">Pantau pergerakan harga crypto real-time</p>
-  <table class="market-table">
-    <thead><tr><th>Aset</th><th>Harga</th><th>24 Jam</th><th>Market Cap</th><th>Volume</th></tr></thead>
-    <tbody id="marketBody"></tbody>
-  </table>
-</section>
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 p-3 md:p-6 overflow-y-auto scrollbar">
+    
+    <!-- TOP BAR -->
+    <div class="card p-4 mb-4 flex items-center justify-between">
+      <div>
+        <p class="text-xs text-gray-400">Selamat datang,</p>
+        <p class="font-semibold" id="userDisplay">User</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="text-right">
+          <p class="text-xs text-gray-400">Airdrop Points</p>
+          <p class="font-bold text-purple-400" id="topPoints">0</p>
+        </div>
+        <button onclick="logout()" class="text-sm bg-red-500/20 text-red-400 px-3 py-1.5 rounded-lg hover:bg-red-500/30">Logout</button>
+      </div>
+    </div>
 
-<section class="features" id="features">
-  <h2 class="section-title">Mengapa NexCrypto?</h2>
-  <p class="section-sub">Fitur premium yang bikin trading makin untung</p>
-  <div class="features-grid">
-    <div class="feature-card"><div class="feature-icon f1">🔒</div><h3>Keamanan Tinggi</h3><p>Enkripsi multi-layer dan cold storage untuk menjaga aset 24/7.</p></div>
-    <div class="feature-card"><div class="feature-icon f2">⚡</div><h3>Eksekusi Cepat</h3><p>Matching engine 100k+ transaksi/detik, order diproses real-time.</p></div>
-    <div class="feature-card"><div class="feature-icon f3">📊</div><h3>Chart Pro</h3><p>TradingView integration dengan 100+ indikator teknikal.</p></div>
-    <div class="feature-card"><div class="feature-icon f4">💎</div><h3>Biaya Rendah</h3><p>0.1% maker / 0.1% taker. Diskon hingga 50% dengan token NEX.</p></div>
-    <div class="feature-card"><div class="feature-icon f5">🌐</div><h3>Multi-Chain</h3><p>Support Ethereum, BSC, Polygon, Solana, dan 10+ jaringan lain.</p></div>
-    <div class="feature-card"><div class="feature-icon f6">🎁</div><h3>Staking Reward</h3><p>Dapatkan passive income hingga 18% APY dari staking.</p></div>
-  </div>
-</section>
+    <!-- ========== DASHBOARD ========== -->
+    <div id="page-dashboard" class="page fade-in">
+      <h2 class="text-2xl font-bold mb-4">📊 Dashboard</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+        <div class="card p-4">
+          <p class="text-gray-400 text-sm">Total Balance</p>
+          <p class="text-2xl font-bold mt-1">$<span id="totalBalance">10,000.00</span></p>
+          <p class="text-xs text-green-400 mt-1">+2.34% (24h)</p>
+        </div>
+        <div class="card p-4">
+          <p class="text-gray-400 text-sm">Airdrop Points</p>
+          <p class="text-2xl font-bold text-purple-400 mt-1" id="dashPoints">0</p>
+          <p class="text-xs text-gray-500 mt-1">Tukar dengan token</p>
+        </div>
+        <div class="card p-4">
+          <p class="text-gray-400 text-sm">Trades Selesai</p>
+          <p class="text-2xl font-bold mt-1" id="tradeCount">0</p>
+          <p class="text-xs text-blue-400 mt-1">Total volume: $<span id="totalVolume">0</span></p>
+        </div>
+        <div class="card p-4">
+          <p class="text-gray-400 text-sm">Eligibility</p>
+          <p class="text-2xl font-bold mt-1" id="eligibilityStatus">⏳</p>
+          <p class="text-xs text-gray-500 mt-1">Cek di menu Airdrop</p>
+        </div>
+      </div>
 
-<section class="newsletter" id="newsletter">
-  <div class="newsletter-box">
-    <h2>📬 Tetap Update</h2>
-    <p>Dapatkan insight crypto & analisa mingguan langsung ke email kamu.</p>
-    <form class="newsletter-form" onsubmit="event.preventDefault();showToast('Berhasil subscribe! 🎉','success')">
-      <input type="email" placeholder="email@kamu.com" required />
-      <button type="submit" class="btn-primary" style="padding:.8rem 1.5rem">Subscribe</button>
-    </form>
-  </div>
-</section>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="card p-4">
+          <h3 class="font-semibold mb-3">💼 Portfolio</h3>
+          <div id="portfolioList" class="space-y-2"></div>
+        </div>
+        <div class="card p-4">
+          <h3 class="font-semibold mb-3">📜 Transaksi Terakhir</h3>
+          <div id="recentTx" class="space-y-2 text-sm max-h-60 overflow-y-auto scrollbar"></div>
+        </div>
+      </div>
+    </div>
 
-<footer>
-  <div class="footer-links">
-    <a href="#">Tentang</a><a href="#">Karir</a><a href="#">Blog</a><a href="#">Support</a><a href="#">Terms</a><a href="#">Privacy</a>
-  </div>
-  <p>© 2025 NexCrypto. All rights reserved. Made with 💜 for crypto lovers.</p>
-</footer>
+    <!-- ========== MARKETS ========== -->
+    <div id="page-markets" class="page hidden fade-in">
+      <h2 class="text-2xl font-bold mb-4">📈 Markets</h2>
+      <div class="card p-4">
+        <div class="grid grid-cols-4 gap-4 text-sm text-gray-400 mb-3 px-2">
+          <div>Coin</div>
+          <div class="text-right">Harga</div>
+          <div class="text-right">24h</div>
+          <div class="text-right">Aksi</div>
+        </div>
+        <div id="marketList" class="space-y-2"></div>
+      </div>
+    </div>
 
-<div id="toast" class="toast"><div class="toast-icon" id="toastIcon"></div><div class="toast-msg" id="toastMsg"></div></div>
+    <!-- ========== TRADE ========== -->
+    <div id="page-trade" class="page hidden fade-in">
+      <h2 class="text-2xl font-bold mb-4">💱 Trade</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        
+        <div class="lg:col-span-2 card p-4">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-lg"><span id="tradePairName">BTC/USDT</span></h3>
+            <span class="text-2xl font-bold" id="tradePrice">\$0</span>
+          </div>
+          <canvas id="priceChart" height="300"></canvas>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3" id="coinSelector"></div>
+        </div>
+
+        <div class="card p-4">
+          <div class="flex mb-3 bg-black/30 rounded-lg p-1">
+            <button onclick="setOrderType('buy')" id="buyTab" class="flex-1 py-2 rounded-md bg-green-600 font-semibold">BUY</button>
+            <button onclick="setOrderType('sell')" id="sellTab" class="flex-1 py-2 rounded-md text-gray-400">SELL</button>
+          </div>
+          
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs text-gray-400">Harga (USDT)</label>
+              <input type="number" id="orderPrice" step="0.01">
+            </div>
+            <div>
+              <label class="text-xs text-gray-400">Jumlah</label>
+              <input type="number" id="orderAmount" step="0.0001">
+            </div>
+            <div>
+              <label class="text-xs text-gray-400">Total (USDT)</label>
+              <input type="number" id="orderTotal" step="0.01" readonly>
+            </div>
+            <div class="grid grid-cols-4 gap-1">
+              <button onclick="setPercent(25)" class="bg-black/30 py-1 rounded text-xs">25%</button>
+              <button onclick="setPercent(50)" class="bg-black/30 py-1 rounded text-xs">50%</button>
+              <button onclick="setPercent(75)" class="bg-black/30 py-1 rounded text-xs">75%</button>
+              <button onclick="setPercent(100)" class="bg-black/30 py-1 rounded text-xs">MAX</button>
+            </div>
+            <button onclick="placeOrder()" id="placeOrderBtn" class="w-full btn-primary text-white font-semibold py-3 rounded-xl">
+              Place Buy Order
+            </button>
+            <p class="text-xs text-gray-500 text-center">+10 points setiap trade sukses 🎁</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Book -->
+      <div class="card p-4 mt-4">
+        <h3 class="font-semibold mb-3">📊 Order Book</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <p class="text-xs text-gray-400 mb-2">BIDS (Buy)</p>
+            <div id="bidList" class="space-y-1 text-sm"></div>
+          </div>
+          <div>
+            <p class="text-xs text-gray-400 mb-2">ASKS (Sell)</p>
+            <div id="askList" class="space-y-1 text-sm"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== AIRDROP ========== -->
+    <div id="page-airdrop" class="page hidden fade-in">
+      <h2 class="text-2xl font-bold mb-4">🎁 Airdrop Center</h2>
+      
+      <!-- Eligibility Status -->
+      <div class="card p-5 mb-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-400 text-sm">Status Kelayakan Airdrop</p>
+            <p class="text-3xl font-bold mt-1" id="airdropEligible">⏳ Checking...</p>
+            <p class="text-sm mt-2" id="eligibilityDetail">Selesaikan semua syarat di bawah</p>
+          </div>
+          <div class="text-6xl" id="eligibilityIcon">🎯</div>
+        </div>
+        <div class="mt-4 bg-black/30 rounded-full h-3 overflow-hidden">
+          <div id="eligibilityBar" class="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all" style="width:0%"></div>
+        </div>
+        <p class="text-xs text-gray-400 mt-1"><span id="eligibilityPercent">0</span>% lengkap</p>
+      </div>
+
+      <!-- Tasks -->
+      <div class="card p-5 mb-4">
+        <h3 class="font-bold text-lg mb-3">📋 Tasks & Misi</h3>
+        <div id="tasksList" class="space-y-2"></div>
+      </div>
+
+      <!-- Airdrop Info -->
+      <div class="card p-5">
+        <h3 class="font-bold text-lg mb-3">ℹ️ Info Airdrop</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div>
+            <p class="text-gray-400">Token Airdrop</p>
+            <p class="font-bold text-lg" id="airdropTokenName">---</p>
+          </div>
+          <div>
+            <p class="text-gray-400">Total Pool</p>
+            <p class="font-bold text-lg" id="airdropPool">---</p>
+          </div>
+          <div>
+            <p class="text-gray-400">Berakhir</p>
+            <p class="font-bold text-lg" id="airdropEnd">---</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== ADMIN (YANG NENTUIN SYARAT) ========== -->
+    <div id="page-admin" class="page hidden fade-in">
+      <h2 class="text-2xl font-bold mb-2">⚙️ Admin Panel</h2>
+      <p class="text-gray-400 text-sm mb-4">Di sini lo nentuin <b>syarat kelayakan airdrop</b>. Atur sesuai kebutuhan, lalu klik Simpan.</p>
+      
+      <!-- Info Airdrop -->
+      <div class="card p-5 mb-4">
+        <h3 class="font-bold text-lg mb-3">🎁 Konfigurasi Airdrop</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div>
+            <label class="text-xs text-gray-400">Nama Token</label>
+            <input type="text" id="cfgTokenName" placeholder="CTP Token">
+          </div>
+          <div>
+            <label class="text-xs text-gray-400">Total Pool Token</label>
+            <input type="number" id="cfgTokenPool" placeholder="1000000">
+          </div>
+          <div>
+            <label class="text-xs text-gray-400">Tanggal Berakhir</label>
+            <input type="date" id="cfgEndDate">
+          </div>
+        </div>
+      </div>
+
+      <!-- Syarat Kelayakan -->
+      <div class="card p-5 mb-4">
+        <h3 class="font-bold text-lg mb-3">📋 Syarat Kelayakan</h3>
+        <p class="text-sm text-gray-400 mb-3">Centang syarat yang WAJIB dipenuhi user:</p>
+        
+        <div class="space-y-3">
+          <label class="flex items-center gap-3 p-3 rounded-lg bg-black/20 cursor-pointer hover:bg-black/30">
+            <input type="checkbox" id="rule_login" class="w-5 h-5" checked>
+            <div class="flex-1">
+              <p class="font-semibold">Login Akun</p>
+              <p class="text-xs text-gray-400">User harus sudah login</p>
+            </div>
+          </label>
+
+          <label class="flex items-center gap-3 p-3 rounded-lg bg-black/20 cursor-pointer hover:bg-black/30">
+            <input type="checkbox" id="rule_kyc" class="w-5 h-5">
+            <div class="flex-1">
+              <p class="font-semibold">Verifikasi KYC</p>
+              <p class="text-xs text-gray-400">User harus verifikasi identitas</p>
+            </div>
+          </label>
+
+          <label class="flex items-center gap-3 p-3 rounded-lg bg-black/20 cursor-pointer hover:bg-black/30">
+            <input type="checkbox" id="rule_wallet" class="w-5 h-5" checked>
+            <div class="flex-1">
+              <p class="font-semibold">Wallet Terhubung</p>
+              <p class="text-xs text-gray-400">User harus connect Web3 wallet</p>
+            </div>
+          </label>
+
+          <label class="flex items-center gap-3 p-3 rounded-lg bg-black/20 cursor-pointer hover:bg-black/30">
+            <input type="checkbox" id="rule_volume" class="w-5 h-5">
+            <div class="flex-1">
+              <p class="font-semibold">Minimum Trading Volume</p>
+              <p class="text-xs text-gray-400">User harus trading minimal jumlah tertentu</p>
+            </div>
+            <div>
+              <input type="number" id="cfgMinVolume" placeholder="1000" class="w-32" oninput="saveAdminConfig()">
+            </div>
+          </label>
+
+          <label class="flex items-center gap-3 p-3 rounded-lg bg-black/20 cursor-pointer hover:bg-black/30">
+            <input type="checkbox" id="rule_trades" class="w-5 h-5">
+            <div class="flex-1">
+              <p class="font-semibold">Minimum Jumlah Trade</p>
+              <p class="text-xs text-gray-400">User harus melakukan minimal X trade</p>
+            </div>
+            <div>
+              <input type="number" id="cfgMinTrades" placeholder="5" class="w-32" oninput="saveAdminConfig()">
+            </div>
+          </label>
+
+          <label class="flex items-center gap-3 p-3 rounded-lg bg-black/20 cursor-pointer hover:bg-black/30">
+            <input type="checkbox" id="rule_points" class="w-5 h-5" checked>
+            <div class="flex-1">
+              <p class="font-semibold">Minimum Points</p>
+              <p class="text-xs text-gray-400">User harus kumpulkan minimal X points</p>
+            </div>
+            <div>
+              <input type="number" id="cfgMinPoints" placeholder="100" class="w-32" oninput="saveAdminConfig()">
+            </div>
+          </label>
+
+          <label class="flex items-center gap-3 p-3 rounded-lg bg-black/20 cursor-pointer hover:bg-black/30">
+            <input type="checkbox" id="rule_referral" class="w-5 h-5">
+            <div class="flex-1">
+              <p class="font-semibold">Minimum Referral</p>
+              <p class="text-xs text-gray-400">User harus undang minimal X teman</p>
+            </div>
+            <div>
+              <input type="number" id="cfgMinReferrals" placeholder="3" class="w-32" oninput="saveAdminConfig()">
+            </div>
+          </label>
+
+          <label class="flex items-center gap-3 p-3 rounded-lg bg-black/20 cursor-pointer hover:bg-black/30">
+            <input type="checkbox" id="rule_social" class="w-5 h-5">
+            <div class="flex-1">
+              <p class="font-semibold">Follow Social Media</p>
+              <p class="text-xs text-gray-400">User harus follow Twitter, Telegram, dsb</p>
+            </div>
+          </label>
+
+          <label class="flex items-center gap-3 p-3 rounded-lg bg-black/20 cursor-pointer hover:bg-black/30">
+            <input type="checkbox" id="rule_hold" class="w-5 h-5">
+            <div class="flex-1">
+              <p class="font-semibold">Hold Token Minimum</p>
+              <p class="text-xs text-gray-400">User harus hold token minimal X hari</p>
+            </div>
+            <div>
+              <input type="number" id="cfgMinHoldDays" placeholder="30" class="w-32" oninput="saveAdminConfig()">
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Custom Tasks -->
+      <div class="card p-5 mb-4">
+        <h3 class="font-bold text-lg mb-3">➕ Tambah Task Custom</h3>
+        <div class="flex gap-2">
+          <input type="text" id="newTaskName" placeholder="Nama task (misal: Share di Twitter)">
+          <input type="number" id="newTaskPoints" placeholder="Points" class="w-32">
+          <button onclick="addCustomTask()" class="btn-primary px-4 py-2 rounded-lg whitespace-nowrap">+ Tambah</button>
+        </div>
+        <div id="customTasksList" class="mt-3 space-y-2"></div>
+      </div>
+
+      <button onclick="saveAdminConfig(); alert('✅ Konfigurasi tersimpan!')" class="btn-primary text-white font-semibold py-3 px-6 rounded-xl">
+        💾 Simpan Konfigurasi
+      </button>
+      <button onclick="resetAdminConfig()" class="ml-2 bg-red-500/20 text-red-400 px-6 py-3 rounded-xl hover:bg-red-500/30">
+        🔄 Reset ke Default
+      </button>
+    </div>
+  </main>
+</div>
+
+<!-- ============ TOAST ============ -->
+<div id="toast" class="fixed top-5 right-5 hidden card p-4 z-50 max-w-sm">
+  <p id="toastMsg" class="text-sm"></p>
+</div>
 
 <script>
-let currentAccount = null;
-let currentChainId = null;
-let dropdownOpen = false;
+// ==========================================
+// STATE MANAGEMENT
+// ==========================================
+const COINS = [
+  {symbol:'BTC',name:'Bitcoin',price:67500,change:2.34,icon:'₿'},
+  {symbol:'ETH',name:'Ethereum',price:3450,change:1.87,icon:'Ξ'},
+  {symbol:'BNB',name:'BNB',price:580,change:-0.45,icon:'⬡'},
+  {symbol:'SOL',name:'Solana',price:145,change:5.23,icon:'◎'},
+  {symbol:'XRP',name:'Ripple',price:0.58,change:-1.12,icon:'✕'},
+  {symbol:'ADA',name:'Cardano',price:0.42,change:0.89,icon:'₳'},
+  {symbol:'DOGE',name:'Dogecoin',price:0.15,change:8.45,icon:'Ð'},
+  {symbol:'MATIC',name:'Polygon',price:0.72,change:-2.33,icon:'⬢'}
+];
 
-const CHAIN_INFO = {
-  '0x1': { name: 'Ethereum', explorer: 'https://etherscan.io' },
-  '0x38': { name: 'BSC', explorer: 'https://bscscan.com' },
-  '0x89': { name: 'Polygon', explorer: 'https://polygonscan.com' },
-  '0xa': { name: 'Optimism', explorer: 'https://optimistic.etherscan.io' },
-  '0xa4b1': { name: 'Arbitrum', explorer: 'https://arbiscan.io' },
-  '0x2105': { name: 'Base', explorer: 'https://basescan.org' }
+const DEFAULT_TASKS = [
+  {id:'t1',name:'Login harian',points:5,type:'daily',done:false},
+  {id:'t2',name:'Connect Web3 Wallet',points:50,type:'onetime',done:false},
+  {id:'t3',name:'Lakukan trade pertama',points:20,type:'onetime',done:false},
+  {id:'t4',name:'Trading volume \$1,000',points:100,type:'volume',target:1000,progress:0,done:false},
+  {id:'t5',name:'Trading volume \$10,000',points:500,type:'volume',target:10000,progress:0,done:false},
+  {id:'t6',name:'Invite 3 teman',points:75,type:'onetime',done:false},
+  {id:'t7',name:'Share di Twitter',points:30,type:'onetime',done:false},
+  {id:'t8',name:'Join Telegram group',points:30,type:'onetime',done:false}
+];
+
+let state = {
+  user: null,           // {id, name, type:'wallet'|'email', address?, email?}
+  balance: 10000,
+  usdt: 10000,
+  holdings: {},         // {BTC: 0.05, ETH: 1.2, ...}
+  points: 0,
+  trades: [],           // [{type, symbol, amount, price, total, time}]
+  tasks: [],
+  customTasks: [],
+  tradeCount: 0,
+  totalVolume: 0,
+  referrals: 0,
+  kycDone: false,
+  walletAgeDays: 0,
+  selectedCoin: 'BTC',
+  orderType: 'buy',
+  adminConfig: {}
 };
 
-async function connectWallet() {
-  if (typeof window.ethereum === 'undefined') {
-    showToast('MetaMask belum terinstall! Install di metamask.io', 'error');
-    setTimeout(() => window.open('https://metamask.io/download/', '_blank'), 1500);
+// Load from localStorage
+function loadState(){
+  const saved = localStorage.getItem('ctp_state');
+  if(saved){
+    try{ state = {...state, ...JSON.parse(saved)} }catch(e){}
+  }
+  if(!state.tasks || state.tasks.length === 0){
+    state.tasks = JSON.parse(JSON.stringify(DEFAULT_TASKS));
+  }
+}
+function saveState(){
+  // Don't save the full state, save only user data
+  const toSave = {...state};
+  delete toSave.adminConfig; // adminConfig is global
+  localStorage.setItem('ctp_state', JSON.stringify(toSave));
+}
+function loadAdminConfig(){
+  const saved = localStorage.getItem('ctp_admin');
+  if(saved){
+    try{ state.adminConfig = JSON.parse(saved) }catch(e){
+      state.adminConfig = getDefaultAdminConfig();
+    }
+  } else {
+    state.adminConfig = getDefaultAdminConfig();
+  }
+}
+function getDefaultAdminConfig(){
+  return {
+    tokenName: 'CTP Token',
+    tokenPool: 1000000,
+    endDate: '2026-12-31',
+    rules: {
+      login: true, kyc: false, wallet: true,
+      volume: false, minVolume: 1000,
+      trades: false, minTrades: 5,
+      points: true, minPoints: 100,
+      referral: false, minReferrals: 3,
+      social: false,
+      hold: false, minHoldDays: 30
+    }
+  };
+}
+
+// ==========================================
+// AUTHENTICATION
+// ==========================================
+async function connectWallet(){
+  if(typeof window.ethereum === 'undefined'){
+    toast('❌ MetaMask/Trust Wallet tidak terdeteksi. Install dulu!','red');
     return;
   }
   try {
-    const btn = document.getElementById('connectBtn');
-    btn.innerHTML = '⏳ Connecting...';
-    btn.disabled = true;
-
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    const network = await provider.getNetwork();
+    const accounts = await window.ethereum.request({method:'eth_requestAccounts'});
+    const address = accounts[0];
     
-    currentAccount = accounts[0];
-    currentChainId = '0x' + network.chainId.toString(16);
+    // Get balance
+    let balance = '0';
+    try {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      balance = await provider.getBalance(address);
+    } catch(e){}
     
-    updateUI();
-    showToast('Wallet connected! 🎉', 'success');
-    getBalance();
+    // Check existing or create new
+    const users = JSON.parse(localStorage.getItem('ctp_users') || '{}');
+    if(users[address]){
+      state.user = users[address];
+      state.user.type = 'wallet';
+    } else {
+      const newUser = {
+        id: address,
+        name: address.substring(0,6) + '...' + address.substring(38),
+        type: 'wallet',
+        address: address,
+        joinDate: Date.now(),
+        walletAgeDays: Math.floor(Math.random()*365)+30
+      };
+      users[address] = newUser;
+      localStorage.setItem('ctp_users', JSON.stringify(users));
+      state.user = newUser;
+      state.points += 50; // bonus
+      state.tasks.find(t=>t.id==='t2').done = true;
+      toast('🎉 +50 points bonus connect wallet!','green');
+    }
     
-  } catch (err) {
-    console.error(err);
-    if (err.code === 4001) showToast('Koneksi dibatalkan', 'info');
-    else showToast('Gagal konek: ' + (err.message || 'Unknown error'), 'error');
-    resetBtn();
+    saveState();
+    enterApp();
+  } catch(e){
+    toast('❌ Wallet connection ditolak','red');
   }
 }
 
-async function getBalance() {
-  if (!currentAccount || typeof window.ethereum === 'undefined') return;
-  try {
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    const balance = await provider.getBalance(currentAccount);
-    const ethBalance = ethers.formatEther(balance);
-    showToast(`Saldo: ${parseFloat(ethBalance).toFixed(4)} ETH`, 'info');
-  } catch (e) { console.error(e); }
-}
-
-function updateUI() {
-  const btn = document.getElementById('connectBtn');
-  const connected = document.getElementById('walletConnected');
-  const addrSpan = document.getElementById('walletAddr');
+function loginGmail(){
+  const email = document.getElementById('emailInput').value.trim();
+  const pass = document.getElementById('passwordInput').value;
+  if(!email || !pass){
+    toast('❌ Email & password wajib diisi','red');
+    return;
+  }
+  if(!email.includes('@')){
+    toast('❌ Format email salah','red');
+    return;
+  }
   
-  if (currentAccount) {
-    btn.style.display = 'none';
-    connected.style.display = 'flex';
-    addrSpan.textContent = formatAddress(currentAccount);
+  const users = JSON.parse(localStorage.getItem('ctp_users') || '{}');
+  if(users[email]){
+    if(users[email].password !== pass){
+      toast('❌ Password salah','red');
+      return;
+    }
+    state.user = users[email];
+    state.user.type = 'email';
   } else {
-    resetBtn();
+    // Register new
+    const newUser = {
+      id: email,
+      name: email.split('@')[0],
+      type: 'email',
+      email: email,
+      password: pass, // ⚠️ DEMO ONLY - untuk production pakai hash + Firebase
+      joinDate: Date.now(),
+      walletAgeDays: 0
+    };
+    users[email] = newUser;
+    localStorage.setItem('ctp_users', JSON.stringify(users));
+    state.user = newUser;
+    toast('🎉 Akun baru dibuat! +20 points bonus','green');
+    state.points += 20;
+  }
+  saveState();
+  enterApp();
+}
+
+function logout(){
+  if(confirm('Yakin logout?')){
+    localStorage.removeItem('ctp_state');
+    location.reload();
   }
 }
 
-function resetBtn() {
-  const btn = document.getElementById('connectBtn');
-  btn.style.display = 'block';
-  btn.innerHTML = 'Connect Wallet';
-  btn.disabled = false;
-  document.getElementById('walletConnected').style.display = 'none';
-  currentAccount = null;
+function enterApp(){
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('mainApp').classList.remove('hidden');
+  document.getElementById('mainApp').classList.add('flex');
+  updateUserDisplay();
+  renderAll();
+  startPriceSimulation();
 }
 
-function formatAddress(addr) {
-  return addr.slice(0, 6) + '...' + addr.slice(-4);
-}
-
-function toggleDropdown() {
-  const dd = document.getElementById('walletDropdown');
-  dropdownOpen = !dropdownOpen;
-  dd.classList.toggle('active', dropdownOpen);
-}
-
-function copyAddress() {
-  navigator.clipboard.writeText(currentAccount);
-  showToast('Address disalin! 📋', 'success');
-  closeDropdown();
-}
-
-function viewOnExplorer() {
-  const chain = CHAIN_INFO[currentChainId];
-  if (chain) window.open(`${chain.explorer}/address/${currentAccount}`, '_blank');
-  else window.open(`https://etherscan.io/address/${currentAccount}`, '_blank');
-  closeDropdown();
-}
-
-function disconnectWallet() {
-  resetBtn();
-  showToast('Wallet disconnected', 'info');
-  closeDropdown();
-}
-
-function closeDropdown() {
-  document.getElementById('walletDropdown').classList.remove('active');
-  dropdownOpen = false;
-}
-
-document.addEventListener('click', (e) => {
-  if (dropdownOpen && !e.target.closest('.wallet-connected')) closeDropdown();
-});
-
-if (window.ethereum) {
-  window.ethereum.on('accountsChanged', (accounts) => {
-    if (accounts.length === 0) { resetBtn(); showToast('Wallet disconnected', 'info'); }
-    else { currentAccount = accounts[0]; updateUI(); showToast('Akun diganti', 'info'); }
+// ==========================================
+// UI RENDERING
+// ==========================================
+function showPage(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
+  document.getElementById('page-'+page).classList.remove('hidden');
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    n.classList.toggle('active', n.dataset.page===page);
   });
-  window.ethereum.on('chainChanged', () => window.location.reload());
+  if(page==='trade') setTimeout(renderChart, 100);
+  if(page==='airdrop') updateEligibility();
+  if(page==='admin') loadAdminPanel();
 }
 
-function showToast(msg, type = 'info') {
+function updateUserDisplay(){
+  document.getElementById('userDisplay').textContent = state.user?.name || 'User';
+  document.getElementById('sidebarPoints').textContent = state.points;
+  document.getElementById('topPoints').textContent = state.points;
+}
+
+function toast(msg, color='purple'){
   const t = document.getElementById('toast');
   document.getElementById('toastMsg').textContent = msg;
-  const icons = { success: '✓', error: '✕', info: 'ℹ' };
-  document.getElementById('toastIcon').innerHTML = icons[type] || icons.info;
-  t.className = 'toast show ' + type;
-  setTimeout(() => t.classList.remove('show'), 4000);
+  t.classList.remove('hidden');
+  t.style.borderColor = color==='green'?'#10b981':color==='red'?'#ef4444':'#8b5cf6';
+  setTimeout(()=>t.classList.add('hidden'), 3500);
 }
 
-function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
+function renderAll(){
+  updateUserDisplay();
+  renderDashboard();
+  renderMarkets();
+  renderTradePage();
+  renderAirdrop();
+  renderCoinSelector();
+  renderOrderBook();
+}
 
-window.addEventListener('scroll', () => {
-  document.querySelectorAll('.nav-links a').forEach(a => a.parentElement.classList.remove('active'));
+// ----- Dashboard -----
+function renderDashboard(){
+  document.getElementById('totalBalance').textContent = state.balance.toFixed(2);
+  document.getElementById('dashPoints').textContent = state.points;
+  document.getElementById('tradeCount').textContent = state.tradeCount;
+  document.getElementById('totalVolume').textContent = state.totalVolume.toFixed(0);
+  
+  // Portfolio
+  let portfolioHTML = '';
+  let totalValue = state.usdt;
+  Object.entries(state.holdings).forEach(([sym,amt])=>{
+    const coin = COINS.find(c=>c.symbol===sym);
+    if(coin && amt > 0){
+      const val = amt * coin.price;
+      totalValue += val;
+      portfolioHTML += `
+        <div class="flex justify-between p-2 rounded bg-black/20">
+          <span>${coin.icon} ${sym}</span>
+          <span>${amt.toFixed(4)} ≈ $${val.toFixed(2)}</span>
+        </div>`;
+    }
+  });
+  portfolioHTML += `
+    <div class="flex justify-between p-2 rounded bg-blue-900/30 border border-blue-500/30 mt-2">
+      <span class="font-semibold">💵 USDT</span>
+      <span class="font-semibold">$${state.usdt.toFixed(2)}</span>
+    </div>`;
+  document.getElementById('portfolioList').innerHTML = portfolioHTML;
+  state.balance = totalValue;
+  
+  // Recent tx
+  const txHTML = state.trades.slice(-10).reverse().map(t=>`
+    <div class="flex justify-between p-2 rounded bg-black/20">
+      <span class="${t.type==='buy'?'text-green-400':'text-red-400'}">${t.type==='buy'?'↗':'↘'} ${t.type.toUpperCase()}</span>
+      <span>${t.amount.toFixed(4)} ${t.symbol} @ $${t.price.toFixed(2)}</span>
+      <span class="text-gray-500 text-xs">${new Date(t.time).toLocaleTimeString()}</span>
+    </div>
+  `).join('') \vert{}\vert{} '<p class="text-gray-500 text-center py-4">Belum ada transaksi</p>';
+  document.getElementById('recentTx').innerHTML = txHTML;
+  
+  // Update eligibility indicator
+  const {passed,total} = checkEligibility();
+  document.getElementById('eligibilityStatus').textContent = 
+    passed===total?'✅ Eligible':`${passed}/${total} syarat`;
+}
+
+// ----- Markets -----
+function renderMarkets(){
+  const html = COINS.map(c=>`
+    <div class="grid grid-cols-4 gap-4 p-3 rounded-lg bg-black/20 hover:bg-black/30 cursor-pointer items-center" onclick="selectCoin('${c.symbol}')">
+      <div class="flex items-center gap-2">
+        <span class="text-2xl">${c.icon}</span>
+        <div>
+          <p class="font-semibold">${c.symbol}/USDT</p>
+          <p class="text-xs text-gray-400">${c.name}</p>
+        </div>
+      </div>
+      <div class="text-right font-mono">$${c.price.toFixed(2)}</div>
+      <div class="text-right ${c.change>=0?'price-up':'price-down'}">${c.change>=0?'+':''}${c.change.toFixed(2)}%</div>
+      <div class="text-right">
+        <button class="btn-primary px-3 py-1 rounded text-xs">Trade</button>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('marketList').innerHTML = html;
+}
+
+// ----- Trade Page -----
+function renderCoinSelector(){
+  const html = COINS.map(c=>`
+    <button onclick="selectCoin('${c.symbol}')" class="p-2 rounded ${state.selectedCoin===c.symbol?'bg-purple-600':'bg-black/30 hover:bg-black/50'} text-sm">
+      ${c.icon} ${c.symbol}
+    </button>
+  `).join('');
+  document.getElementById('coinSelector').innerHTML = html;
+}
+
+function renderTradePage(){
+  const coin = COINS.find(c=>c.symbol===state.selectedCoin);
+  if(!coin) return;
+  document.getElementById('tradePairName').textContent = coin.symbol+'/USDT';
+  document.getElementById('tradePrice').textContent = '$'+coin.price.toFixed(2);
+  document.getElementById('orderPrice').value = coin.price.toFixed(2);
+}
+
+function selectCoin(sym){
+  state.selectedCoin = sym;
+  renderCoinSelector();
+  renderTradePage();
+  renderChart();
+  renderOrderBook();
+}
+
+function setOrderType(type){
+  state.orderType = type;
+  document.getElementById('buyTab').className = `flex-1 py-2 rounded-md font-semibold ${type==='buy'?'bg-green-600':'text-gray-400'}`;
+  document.getElementById('sellTab').className = `flex-1 py-2 rounded-md font-semibold ${type==='sell'?'bg-red-600':'text-gray-400'}`;
+  document.getElementById('placeOrderBtn').textContent = `Place ${type==='buy'?'Buy':'Sell'} Order`;
+  document.getElementById('placeOrderBtn').className = `w-full text-white font-semibold py-3 rounded-xl ${type==='buy'?'bg-green-600 hover:bg-green-700':'bg-red-600 hover:bg-red-700'}`;
+}
+
+function setPercent(p){
+  const coin = COINS.find(c=>c.symbol===state.selectedCoin);
+  if(!coin) return;
+  if(state.orderType==='buy'){
+    const max = state.usdt / coin.price;
+    document.getElementById('orderAmount').value = (max * p/100).toFixed(6);
+  } else {
+    const held = state.holdings[coin.symbol] || 0;
+    document.getElementById('orderAmount').value = (held * p/100).toFixed(6);
+  }
+  updateTotal();
+}
+
+function updateTotal(){
+  const p = parseFloat(document.getElementById('orderPrice').value) || 0;
+  const a = parseFloat(document.getElementById('orderAmount').value) || 0;
+  document.getElementById('orderTotal').value = (p*a).toFixed(2);
+}
+
+document.addEventListener('input', e=>{
+  if(e.target.id==='orderPrice' || e.target.id==='orderAmount') updateTotal();
 });
 
-const tickerData = [
-  { name: 'BTC', price: 67423, change: 2.4 },
-  { name: 'ETH', price: 3521, change: 1.8 },
-  { name: 'BNB', price: 612, change: -0.5 },
-  { name: 'SOL', price: 178, change: 5.2 },
-  { name: 'XRP', price: 0.52, change: -1.2 },
-  { name: 'ADA', price: 0.45, change: 3.1 },
-  { name: 'DOGE', price: 0.12, change: 8.4 },
-  { name: 'AVAX', price: 38.2, change: -2.3 },
-  { name: 'MATIC', price: 0.72, change: 1.5 },
-  { name: 'DOT', price: 7.21, change: 0.8 }
-];
-function renderTicker() {
-  const items = [...tickerData, ...tickerData].map(c => {
-    const cls = c.change >= 0 ? 'up' : 'down';
-    const sign = c.change >= 0 ? '+' : '';
-    return `<div class="ticker-item"><span class="name">${c.name}</span><span class="price">$${c.price.toLocaleString()}</span><span class="change ${cls}">${sign}${c.change}%</span></div>`;
-  }).join('');
-  document.getElementById('ticker').innerHTML = items;
+function placeOrder(){
+  const coin = COINS.find(c=>c.symbol===state.selectedCoin);
+  const price = parseFloat(document.getElementById('orderPrice').value);
+  const amount = parseFloat(document.getElementById('orderAmount').value);
+  const total = price * amount;
+  
+  if(!price || !amount || amount <= 0){
+    toast('❌ Isi harga & jumlah dengan benar','red');
+    return;
+  }
+  
+  if(state.orderType==='buy'){
+    if(total > state.usdt){
+      toast('❌ USDT tidak cukup','red');
+      return;
+    }
+    state.usdt -= total;
+    state.holdings[coin.symbol] = (state.holdings[coin.symbol] || 0) + amount;
+  } else {
+    if((state.holdings[coin.symbol] || 0) < amount){
+      toast('❌ ' + coin.symbol + ' tidak cukup','red');
+      return;
+    }
+    state.usdt += total;
+    state.holdings[coin.symbol] -= amount;
+  }
+  
+  // Record
+  const tx = {
+    type: state.orderType, symbol: coin.symbol,
+    amount, price, total, time: Date.now()
+  };
+  state.trades.push(tx);
+  state.tradeCount++;
+  state.totalVolume += total;
+  state.points += 10;
+  
+  // Update tasks
+  state.tasks.find(t=>t.id==='t3').done = true;
+  state.tasks.forEach(t=>{
+    if(t.type==='volume'){
+      t.progress = state.totalVolume;
+      t.done = t.progress >= t.target;
+    }
+  });
+  
+  saveState();
+  toast(`✅ ${state.orderType.toUpperCase()} ${amount} ${coin.symbol} sukses! +10 points 🎁`,'green');
+  renderAll();
+  
+  // Reset form
+  document.getElementById('orderAmount').value = '';
+  document.getElementById('orderTotal').value = '';
 }
 
-const coins = [
-  { name: 'Bitcoin', sym: 'BTC', color: '#f7931a', price: 67423, change: 2.4, mcap: '1.32T', vol: '24.5B' },
-  { name: 'Ethereum', sym: 'ETH', color: '#627eea', price: 3521, change: 1.8, mcap: '423B', vol: '12.1B' },
-  { name: 'BNB', sym: 'BNB', color: '#f0b90b', price: 612, change: -0.5, mcap: '92B', vol: '1.8B' },
-  { name: 'Solana', sym: 'SOL', color: '#14f195', price: 178, change: 5.2, mcap: '82B', vol: '3.2B' },
-  { name: 'XRP', sym: 'XRP', color: '#23292f', price: 0.52, change: -1.2, mcap: '28B', vol: '1.1B' },
-  { name: 'Cardano', sym: 'ADA', color: '#0033ad', price: 0.45, change: 3.1, mcap: '16B', vol: '420M' }
-];
-function renderMarket() {
-  document.getElementById('marketBody').innerHTML = coins.map(c => {
-    const cls = c.change >= 0 ? 'up-color' : 'down-color';
-    const sign = c.change >= 0 ? '+' : '';
-    return `<tr><td><div class="coin-cell"><div class="coin-icon" style="background:${c.color}">${c.sym[0]}</div><div><div class="coin-name">${c.name}</div><div class="coin-symbol">${c.sym}</div></div></div></td><td>$${c.price.toLocaleString()}</td><td class="${cls}">${sign}${c.change}%</td><td>$${c.mcap}</td><td>$${c.vol}</td></tr>`;
-  }).join('');
-}
+// ----- Chart -----
+let chart = null;
+const priceHistory = {};
 
-function animateStats() {
-  document.querySelectorAll('.stat-num').forEach(el => {
-    const target = parseFloat(el.dataset.target);
-    const suffix = el.textContent.replace(/[\d.]/g, '');
-    let current = 0;
-    const inc = target / 60;
-    const tick = () => {
-      current += inc;
-      if (current >= target) { el.textContent = target + suffix; return; }
-      el.textContent = current.toFixed(target < 10 ? 1 : 0) + suffix;
-      requestAnimationFrame(tick);
-    };
-    tick();
+function initPriceHistory(){
+  COINS.forEach(c=>{
+    priceHistory[c.symbol] = [];
+    let p = c.price;
+    for(let i=0;i<30;i++){
+      p = p * (1 + (Math.random()-0.5)*0.02);
+      priceHistory[c.symbol].push(p);
+    }
   });
 }
 
-window.addEventListener('load', () => {
-  renderTicker();
-  renderMarket();
-  setTimeout(animateStats, 500);
-  setInterval(() => {
-    coins.forEach(c => c.price *= (1 + (Math.random() - 0.5) * 0.005));
-    c => c.change = +(c.change + (Math.random() - 0.5) * 0.3).toFixed(1);
-    renderMarket();
-  }, 5000);
-});
-</script>
-</body>
-</html>
+function renderChart(){
+  const coin = COINS.find(c=>c.symbol===state.selectedCoin);
+  if(!coin || !priceHistory[coin.symbol]) return;
+  const ctx = document.getElementById('priceChart');
+  if(!ctx) return;
+  
+  if(chart) chart.destroy();
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: priceHistory[coin.symbol].map((_,i)=>'T-'+(30-i)),
+      datasets: [{
+        label: coin.symbol + ' Price',
+        data: priceHistory[coin.symbol],
+        borderColor: '#8b5cf6',
+        backgroundColor: 'rgba(139,92,246,0.1)',
+        fill: true, tension: 0.4,
+        pointRadius: 0
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: {color:'#9ca3af'} },
+        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: {color:'#9ca3af', callback:v=>'$'+v.toFixed(0)} }
+      }
+    }
+  });
+}
+
+function startPriceSimulation(){
+  setInterval(()=>{
+    COINS.forEach(c=>{
+      c.change = (c.change + (Math.random()-0.5)*0.3);
+      c.price = c.price * (1 + (Math.random()-0.5)*0.005);
+      if(priceHistory[c.symbol]){
+        priceHistory[c.symbol].push(c.price);
+        if(priceHistory[c.symbol].length > 50) priceHistory[c.symbol].shift();
+      }
+    });
+    if(state.selectedCoin && chart){
+      const coin = COINS.find(c=>c.symbol===state.selectedCoin);
+      document.getElementById('tradePrice').textContent = '$'+coin.price.toFixed(2);
+      chart.data.datasets[0].data = priceHistory[coin.symbol];
+      chart.data.labels = priceHistory[coin.symbol].map((_,i)=>'T-'+(priceHistory[coin.symbol].length-i));
+      chart.update('none');
+    }
+    renderOrderBook();
+  }, 3000);
+}
+
+// ----- Order Book -----
+function renderOrderBook(){
+  const coin = COINS.find(c=>c.symbol===state.selectedCoin);
+  if(!coin) return;
+  const base = coin.price;
+  const bids = [], asks = [];
+  for(let i=0;i<8;i++){
+    bids.push({price: base*(1-Math.random()*0.01), amount: Math.random()*2});
+    asks.push({price: base*(1+Math.random()*0.01), amount: Math.random()*2});
+  }
+  document.getElementById('bidList').innerHTML = bids.sort((a,b)=>b.price-a.price).map(b=>`
+    <div class="flex justify-between text-green-400 font-mono">
+      <span>$${b.price.toFixed(2)}</span>
+      <span>${b.amount.toFixed(4)}</span>
+    </div>
+  `).join('');
+  document.getElementById('askList').innerHTML = asks.sort((a,b)=>a.price-b.price).map(a=>`
+    <div class="flex justify-between text-red-400 font-mono">
+      <span>$${a.price.toFixed(2)}</span>
+      <span>${a.amount.toFixed(4)}</span>
+    </div>
+  `).join('');
+}
+
+// ----- Airdrop -----
+function renderAirdrop(){
+  const allTasks = [...state.tasks, ...(state.customTasks||[]).map(ct=>({...ct,custom:true}))];
+  const html = allTasks.map(t=>{
+    let progress = '';
+    if(t.type==='volume' && t.target){
+      const pct = Math.min(100, (t.progress/t.target)*100);
+      progress = `
+        <div class="mt-2 bg-black/30 rounded-full h-2 overflow-hidden">
+          <div class="h-full bg-purple-500" style="width:${pct}%"></div>
+        </div>
+        <p class="text-xs text-gray-400 mt-1">$${t.progress.toFixed(0)} / $${t.target}</p>`;
+    }
+    return `
+      <div class="task-check p-3 rounded-lg ${t.done?'bg-green-900/30 border border-green-500/30':'bg-black/20'} flex items-center gap-3">
+        <input type="checkbox" ${t.done?'checked':''} onchange="toggleTask('${t.id}', this.checked, ${t.custom||false})" class="w-5 h-5">
+        <div class="flex-1">
+          <div class="flex justify-between">
+            <p class="font-semibold ${t.done?'line-through text-gray-500':''}">${t.name}</p>
+            <p class="text-purple-400 font-bold">+${t.points} pts</p>
+          </div>
+          ${progress}
+        </div>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('tasksList').innerHTML = html;
+  
+  // Airdrop info from admin config
+  const cfg = state.adminConfig || getDefaultAdminConfig();
+  document.getElementById('airdropTokenName').textContent = cfg.tokenName;
+  document.getElementById('airdropPool').textContent = cfg.tokenPool.toLocaleString() + ' ' + cfg.tokenName;
+  document.getElementById('airdropEnd').textContent = cfg.endDate || '---';
+}
+
+function toggleTask(id, done, custom){
+  let task;
+  if(custom){
+    task = state.customTasks.find(t=>t.id===id);
+  } else {
+    task = state.tasks.find(t=>t.id===id);
+  }
+  if(!task) return;
+  if(done && !task.done){
+    state.points += task.points;
+    toast(`🎉 +${task.points} points!`,'green');
+  } else if(!done && task.done){
+    state.points -= task.points;
+  }
+  task.done = done;
+  saveState();
+  renderAirdrop();
+  updateUserDisplay();
+  updateEligibility();
+}
+
+function checkEligibility(){
+  const cfg = state.adminConfig || getDefaultAdminConfig();
+  const rules = cfg.rules;
+  const checks = [];
+  
+  if(rules.login) checks.push({name:'Login', pass: !!state.user});
+  if(rules.kyc) checks.push({name:'KYC', pass: state.kycDone});
+  if(rules.wallet) checks.push({name:'Wallet Connected', pass: state.user?.type==='wallet'});
