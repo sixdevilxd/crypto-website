@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>NexCrypto Trading — BTC/USDT</title>
+<title>NexCrypto Trading — Sign In with Ethereum</title>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.0/dist/ethers.umd.min.js"></script>
 <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
 <style>
@@ -24,17 +24,26 @@ body{background:#0a0e1a;color:#e0e6f0;overflow-x:hidden;min-height:100vh}
 .ticker-change{font-size:.85rem;font-weight:600;padding:.2rem .6rem;border-radius:6px}
 .up{color:#10b981;background:rgba(16,185,129,.1)}
 .down{color:#ef4444;background:rgba(239,68,68,.1)}
-.nav-right{display:flex;align-items:center;gap:.5rem}
+.nav-right{display:flex;align-items:center;gap:.5rem;align-items:center}
 .connect-btn{background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;border:none;padding:.5rem 1.2rem;border-radius:50px;font-weight:600;cursor:pointer;font-size:.85rem;transition:all .3s;box-shadow:0 4px 15px rgba(59,130,246,.3)}
+.connect-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,.4)}
 .wallet-connected{display:flex;align-items:center;gap:.4rem;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);padding:.4rem .8rem;border-radius:50px;color:#10b981;font-size:.8rem;font-weight:600;cursor:pointer;position:relative}
-.wallet-connected .dot{width:6px;height:6px;background:#10b981;border-radius:50%;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-.wallet-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:#131a2b;border:1px solid rgba(255,255,255,.1);border-radius:12px;min-width:200px;padding:.4rem;box-shadow:0 10px 30px rgba(0,0,0,.5);display:none;z-index:200}
-.wallet-dropdown.active{display:block}
-.wallet-dropdown .dd-item{padding:.6rem .8rem;border-radius:8px;cursor:pointer;font-size:.8rem;color:#cbd5e1;display:flex;align-items:center;gap:.5rem}
+.wallet-connected .dot{width:6px;height:6px;background:#10b981;border-radius:50%;animation:pulse 2s infinite;box-shadow:0 0 8px #10b981}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.wallet-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:#131a2b;border:1px solid rgba(255,255,255,.1);border-radius:12px;min-width:220px;padding:.4rem;box-shadow:0 10px 30px rgba(0,0,0,.5);display:none;z-index:200}
+.wallet-dropdown.active{display:block;animation:slideDown .2s}
+@keyframes slideDown{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+.wallet-dropdown .dd-header{padding:.6rem .8rem;border-bottom:1px solid rgba(255,255,255,.05);margin-bottom:.3rem}
+.wallet-dropdown .dd-addr{font-size:.7rem;color:#94a3b8;font-family:monospace}
+.wallet-dropdown .dd-balance{font-size:.85rem;font-weight:700;color:#10b981;margin-top:.2rem}
+.wallet-dropdown .dd-item{padding:.6rem .8rem;border-radius:8px;cursor:pointer;font-size:.8rem;color:#cbd5e1;display:flex;align-items:center;gap:.5rem;transition:all .15s}
 .wallet-dropdown .dd-item:hover{background:rgba(59,130,246,.1);color:#3b82f6}
 .wallet-dropdown .dd-divider{height:1px;background:rgba(255,255,255,.05);margin:.3rem 0}
-.profile-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#e0e6f0;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all .2s;position:relative}
+.demo-toggle{display:flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);padding:.3rem .7rem;border-radius:50px;cursor:pointer;font-size:.7rem;font-weight:600;color:#94a3b8;transition:all .2s}
+.demo-toggle.active{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3);color:#f59e0b}
+.demo-toggle .dot{width:6px;height:6px;border-radius:50%;background:#64748b;transition:all .2s}
+.demo-toggle.active .dot{background:#f59e0b;box-shadow:0 0 6px #f59e0b}
+.profile-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#e0e6f0;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all .2s}
 .profile-btn:hover{background:rgba(59,130,246,.15);border-color:#3b82f6}
 .back-home{color:#94a3b8;text-decoration:none;font-size:.85rem;display:flex;align-items:center;gap:.3rem;padding:.4rem .8rem;border-radius:8px;transition:all .2s}
 .back-home:hover{background:rgba(255,255,255,.05);color:#3b82f6}
@@ -44,13 +53,17 @@ body{background:#0a0e1a;color:#e0e6f0;overflow-x:hidden;min-height:100vh}
 
 .chart-section{display:flex;flex-direction:column;gap:1rem;min-width:0}
 .chart-box{background:rgba(19,26,43,.4);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:1rem;flex:1;min-height:400px;position:relative}
-.chart-controls{display:flex;gap:.3rem;margin-bottom:.5rem;flex-wrap:wrap}
+.chart-controls{display:flex;gap:.3rem;margin-bottom:.5rem;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.tf-group{display:flex;gap:.3rem;flex-wrap:wrap}
 .tf-btn{background:transparent;border:1px solid rgba(255,255,255,.05);color:#94a3b8;padding:.3rem .7rem;border-radius:6px;cursor:pointer;font-size:.75rem;font-weight:600;transition:all .2s}
 .tf-btn.active{background:rgba(59,130,246,.15);border-color:#3b82f6;color:#3b82f6}
+.live-indicator{display:flex;align-items:center;gap:.3rem;font-size:.7rem;color:#10b981;font-weight:600}
+.live-indicator .dot{width:6px;height:6px;background:#10b981;border-radius:50%;animation:pulse 1.5s infinite}
 #chart{width:100%;height:calc(100% - 40px);min-height:350px}
 
 .orderbook{background:rgba(19,26,43,.4);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:1rem;height:fit-content;max-height:400px;display:flex;flex-direction:column}
-.ob-title{font-size:.85rem;font-weight:700;color:#94a3b8;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px}
+.ob-title{font-size:.85rem;font-weight:700;color:#94a3b8;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px;display:flex;justify-content:space-between;align-items:center}
+.ob-spread-pct{font-size:.7rem;color:#3b82f6;background:rgba(59,130,246,.1);padding:.1rem .4rem;border-radius:4px}
 .ob-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.3rem;padding:.25rem .3rem;font-size:.75rem;align-items:center;position:relative}
 .ob-row .bar-bg{position:absolute;right:0;top:0;bottom:0;background:rgba(239,68,68,.1);z-index:0;border-radius:2px}
 .ob-row.buy .bar-bg{background:rgba(16,185,129,.1)}
@@ -82,10 +95,13 @@ body{background:#0a0e1a;color:#e0e6f0;overflow-x:hidden;min-height:100vh}
 .execute-btn.buy{background:linear-gradient(135deg,#10b981,#059669);color:#fff;box-shadow:0 4px 15px rgba(16,185,129,.3)}
 .execute-btn.sell{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;box-shadow:0 4px 15px rgba(239,68,68,.3)}
 .execute-btn:hover{transform:translateY(-1px);filter:brightness(1.1)}
+.execute-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
 .portfolio{background:rgba(19,26,43,.4);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:1rem}
 .port-title{font-size:.85rem;font-weight:700;color:#94a3b8;margin-bottom:.8rem;text-transform:uppercase;letter-spacing:.5px;display:flex;justify-content:space-between;align-items:center}
 .port-balance{background:linear-gradient(135deg,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:1.3rem;font-weight:800}
+.port-mode{font-size:.65rem;padding:.15rem .5rem;border-radius:4px;background:rgba(245,158,11,.15);color:#f59e0b;font-weight:700;letter-spacing:.5px}
+.port-mode.real{background:rgba(16,185,129,.15);color:#10b981}
 .port-actions{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:.8rem}
 .port-action{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;padding:.4rem;border-radius:8px;cursor:pointer;font-size:.75rem;font-weight:600;transition:all .2s}
 .port-action:hover{background:rgba(59,130,246,.2);transform:translateY(-1px)}
@@ -140,10 +156,15 @@ body{background:#0a0e1a;color:#e0e6f0;overflow-x:hidden;min-height:100vh}
 .modal-confirm.withdraw{background:linear-gradient(135deg,#ef4444,#dc2626);box-shadow:0 4px 20px rgba(239,68,68,.4)}
 .modal-confirm.withdraw:hover{box-shadow:0 6px 25px rgba(239,68,68,.6)}
 
+.signin-msg{background:rgba(0,0,0,.4);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:1rem;margin-bottom:1rem;font-family:monospace;font-size:.75rem;color:#94a3b8;max-height:150px;overflow-y:auto;line-height:1.4}
+.signin-msg strong{color:#3b82f6}
+
 .profile-header{text-align:center;padding:1rem 0 1.5rem;border-bottom:1px solid rgba(255,255,255,.05);margin-bottom:1rem}
-.profile-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6,#ec4899);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:800;margin:0 auto .8rem;box-shadow:0 8px 25px rgba(59,130,246,.4)}
+.profile-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6,#ec4899);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:800;margin:0 auto .8rem;box-shadow:0 8px 25px rgba(59,130,246,.4);position:relative}
+.profile-avatar.verified::after{content:'✓';position:absolute;bottom:-2px;right:-2px;width:24px;height:24px;background:#10b981;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:#fff;border:3px solid #131a2b}
 .profile-name{font-size:1.1rem;font-weight:700;margin-bottom:.2rem}
 .profile-addr{font-size:.8rem;color:#94a3b8;font-family:monospace}
+.profile-greeting{font-size:.85rem;color:#10b981;margin-top:.3rem;font-weight:600}
 .profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1rem}
 .p-stat{background:rgba(255,255,255,.03);border-radius:10px;padding:.8rem;text-align:center}
 .p-stat-val{font-size:1.1rem;font-weight:700;background:linear-gradient(135deg,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.2rem}
@@ -159,7 +180,7 @@ body{background:#0a0e1a;color:#e0e6f0;overflow-x:hidden;min-height:100vh}
 .txn-row{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:.8rem}
 .txn-row:last-child{border-bottom:none}
 .txn-left{display:flex;align-items:center;gap:.6rem}
-.txn-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.txn-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
 .txn-icon.dep{background:rgba(16,185,129,.15);color:#10b981}
 .txn-icon.wd{background:rgba(239,68,68,.15);color:#ef4444}
 .txn-icon.trade{background:rgba(59,130,246,.15);color:#3b82f6}
@@ -170,32 +191,52 @@ body{background:#0a0e1a;color:#e0e6f0;overflow-x:hidden;min-height:100vh}
 .txn-amount.negative{color:#ef4444}
 .empty-state{text-align:center;padding:1.5rem;color:#64748b;font-size:.85rem}
 
-.toast{position:fixed;bottom:2rem;right:2rem;background:#131a2b;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1rem 1.5rem;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:1000;display:flex;align-items:center;gap:.8rem;transform:translateY(150%);transition:transform .4s cubic-bezier(.4,0,.2,1);max-width:350px}
+.toast{position:fixed;bottom:2rem;right:2rem;background:#131a2b;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1rem 1.5rem;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:1000;display:flex;align-items:center;gap:.8rem;transform:translateY(150%);transition:transform .4s cubic-bezier(.4,0,.2,1);max-width:380px}
 .toast.show{transform:translateY(0)}
-.toast-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.toast-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;font-weight:700}
 .toast.success .toast-icon{background:rgba(16,185,129,.2);color:#10b981}
 .toast.error .toast-icon{background:rgba(239,68,68,.2);color:#ef4444}
 .toast.info .toast-icon{background:rgba(59,130,246,.2);color:#3b82f6}
-.toast-msg{font-size:.9rem;color:#e0e6f0}
+.toast-msg{font-size:.85rem;color:#e0e6f0;line-height:1.4}
+
+.loading{position:fixed;inset:0;background:#0a0e1a;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;transition:opacity .5s}
+.loading.hide{opacity:0;pointer-events:none}
+.loading-spinner{width:50px;height:50px;border:3px solid rgba(59,130,246,.2);border-top-color:#3b82f6;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{color:#94a3b8;font-size:.9rem}
 </style>
 </head>
 <body>
+
+<div class="loading" id="loading">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Initializing NexCrypto...</div>
+</div>
 
 <div class="topbar">
   <a href="index.html" class="logo">NexCrypto</a>
   <div class="pairs" id="pairs"></div>
   <div class="ticker-info">
-    <div class="ticker-price" id="tPrice">\$0</div>
+    <div class="ticker-price" id="tPrice">$0.00</div>
     <div class="ticker-change up" id="tChange">+0.00%</div>
   </div>
   <div class="nav-right">
+    <div class="demo-toggle" id="demoToggle" onclick="toggleDemo()" title="Toggle Demo/Real Mode">
+      <span class="dot"></span>
+      <span id="demoLabel">DEMO</span>
+    </div>
     <a href="index.html" class="back-home">← Home</a>
     <button id="connectBtn" class="connect-btn" onclick="connectWallet()">Connect Wallet</button>
     <div id="walletConnected" class="wallet-connected" style="display:none" onclick="toggleDropdown()">
       <span class="dot"></span>
       <span id="walletAddr">0x0000...0000</span>
       <div class="wallet-dropdown" id="walletDropdown">
+        <div class="dd-header">
+          <div class="dd-addr" id="ddAddr">0x0000...0000</div>
+          <div class="dd-balance" id="ddBalance">$0.00</div>
+        </div>
         <div class="dd-item" onclick="event.stopPropagation();copyAddress()">📋 Copy Address</div>
+        <div class="dd-item" onclick="event.stopPropagation();viewOnExplorer()">🔍 View on Explorer</div>
         <div class="dd-divider"></div>
         <div class="dd-item" onclick="event.stopPropagation();disconnectWallet()" style="color:#ef4444">⏏️ Disconnect</div>
       </div>
@@ -208,17 +249,20 @@ body{background:#0a0e1a;color:#e0e6f0;overflow-x:hidden;min-height:100vh}
   <div class="chart-section">
     <div class="chart-box">
       <div class="chart-controls">
-        <button class="tf-btn" data-tf="1m">1m</button>
-        <button class="tf-btn active" data-tf="5m">5m</button>
-        <button class="tf-btn" data-tf="15m">15m</button>
-        <button class="tf-btn" data-tf="1h">1h</button>
-        <button class="tf-btn" data-tf="4h">4h</button>
-        <button class="tf-btn" data-tf="1d">1d</button>
+        <div class="tf-group">
+          <button class="tf-btn" data-tf="1m">1m</button>
+          <button class="tf-btn active" data-tf="5m">5m</button>
+          <button class="tf-btn" data-tf="15m">15m</button>
+          <button class="tf-btn" data-tf="1h">1h</button>
+          <button class="tf-btn" data-tf="4h">4h</button>
+          <button class="tf-btn" data-tf="1d">1d</button>
+        </div>
+        <div class="live-indicator"><span class="dot"></span>LIVE • CoinGecko</div>
       </div>
       <div id="chart"></div>
     </div>
     <div class="orderbook">
-      <div class="ob-title">Order Book</div>
+      <div class="ob-title">Order Book <span class="ob-spread-pct" id="spreadPct">0.01%</span></div>
       <div class="ob-row" style="color:#64748b;font-size:.7rem;text-transform:uppercase">
         <span>Price (USDT)</span><span style="text-align:center">Amount</span><span style="text-align:right">Total</span>
       </div>
@@ -234,18 +278,18 @@ body{background:#0a0e1a;color:#e0e6f0;overflow-x:hidden;min-height:100vh}
         <button class="trade-tab buy active" onclick="setSide('buy')">BUY</button>
         <button class="trade-tab sell" onclick="setSide('sell')">SELL</button>
       </div>
-      <div class="trade-info"><span class="label">Available</span><span class="value" id="available">\$10,000.00</span></div>
+      <div class="trade-info"><span class="label">Available</span><span class="value" id="available">$10,000.00</span></div>
       <div class="trade-input">
         <label>Price</label>
         <div class="trade-input-inner">
-          <input type="number" id="inpPrice" value="0" />
+          <input type="number" id="inpPrice" value="0" step="0.01" />
           <span class="suffix">USDT</span>
         </div>
       </div>
       <div class="trade-input">
         <label>Amount</label>
         <div class="trade-input-inner">
-          <input type="number" id="inpAmount" placeholder="0.00" />
+          <input type="number" id="inpAmount" placeholder="0.00" step="0.0001" />
           <span class="suffix" id="amtSuffix">BTC</span>
         </div>
       </div>
@@ -256,13 +300,14 @@ body{background:#0a0e1a;color:#e0e6f0;overflow-x:hidden;min-height:100vh}
         <button class="percent-btn" onclick="setPercent(100)">MAX</button>
       </div>
       <div class="trade-info"><span class="label">Total</span><span class="value" id="inpTotal">0.00 USDT</span></div>
+      <div class="trade-info"><span class="label">Fee (0.1%)</span><span class="value" id="inpFee">0.00</span></div>
       <button class="execute-btn buy" id="executeBtn" onclick="executeTrade()">Buy BTC</button>
     </div>
 
     <div class="portfolio">
       <div class="port-title">
-        <span>Portfolio</span>
-        <span class="port-balance" id="portBalance">\$10,000.00</span>
+        <span>Portfolio <span class="port-mode" id="portMode">DEMO</span></span>
+        <span class="port-balance" id="portBalance">$10,000.00</span>
       </div>
       <div class="port-actions">
         <button class="port-action deposit" onclick="openDeposit()">💳 Deposit</button>
@@ -278,6 +323,21 @@ body{background:#0a0e1a;color:#e0e6f0;overflow-x:hidden;min-height:100vh}
   </div>
 </div>
 
+<div class="modal-bg" id="signinModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🔐 Sign In with Ethereum</div>
+    </div>
+    <div style="text-align:center;margin-bottom:1rem">
+      <div style="font-size:2.5rem;margin-bottom:.5rem">🦊</div>
+      <p style="color:#94a3b8;font-size:.85rem">Sign a message to verify you own this wallet.<br><strong style="color:#10b981">Free • No gas fee</strong></p>
+    </div>
+    <div class="signin-msg" id="signinMsg"></div>
+    <button class="modal-confirm" id="signinBtn" onclick="signIn()">✍️ Sign Message</button>
+    <button class="modal-confirm" style="background:rgba(255,255,255,.05);box-shadow:none;margin-top:.5rem;color:#94a3b8" onclick="closeModal('signinModal')">Cancel</button>
+  </div>
+</div>
+
 <div class="modal-bg" id="profileModal">
   <div class="modal">
     <div class="modal-header">
@@ -285,13 +345,14 @@ body{background:#0a0e1a;color:#e0e6f0;overflow-x:hidden;min-height:100vh}
       <button class="modal-close" onclick="closeModal('profileModal')">✕</button>
     </div>
     <div class="profile-header">
-      <div class="profile-avatar" id="profileAvatar">?</div>
+      <div class="profile-avatar verified" id="profileAvatar">?</div>
       <div class="profile-name" id="profileName">Guest Trader</div>
       <div class="profile-addr" id="profileAddr">Not connected</div>
+      <div class="profile-greeting" id="profileGreeting"></div>
     </div>
     <div class="profile-stats">
       <div class="p-stat"><div class="p-stat-val" id="statTrades">0</div><div class="p-stat-lbl">Trades</div></div>
-      <div class="p-stat"><div class="p-stat-val" id="statVolume">\$0</div><div class="p-stat-lbl">Volume</div></div>
+      <div class="p-stat"><div class="p-stat-val" id="statVolume">$0</div><div class="p-stat-lbl">Volume</div></div>
       <div class="p-stat"><div class="p-stat-val" id="statRank">🥉</div><div class="p-stat-lbl">Rank</div></div>
     </div>
     <div class="profile-actions">
@@ -323,16 +384,16 @@ body{background:#0a0e1a;color:#e0e6f0;overflow-x:hidden;min-height:100vh}
       <div class="modal-label">Amount (USD)</div>
       <input type="number" class="modal-input" id="depositAmount" placeholder="0.00" />
       <div class="quick-amt">
-        <button onclick="setQuickAmt(100)">\$100</button>
-        <button onclick="setQuickAmt(500)">\$500</button>
-        <button onclick="setQuickAmt(1000)">\$1,000</button>
-        <button onclick="setQuickAmt(5000)">\$5,000</button>
+        <button onclick="setQuickAmt(100)">$100</button>
+        <button onclick="setQuickAmt(500)">$500</button>
+        <button onclick="setQuickAmt(1000)">$1,000</button>
+        <button onclick="setQuickAmt(5000)">$5,000</button>
       </div>
     </div>
     <div class="modal-summary">
       <div class="summary-row"><span class="lbl">Method</span><span class="val" id="depMethod">Card</span></div>
-      <div class="summary-row"><span class="lbl">Fee</span><span class="val" id="depFee">\$0.00</span></div>
-      <div class="summary-row total"><span class="lbl">You'll Get</span><span class="val" id="depTotal">\$0.00</span></div>
+      <div class="summary-row"><span class="lbl">Fee</span><span class="val" id="depFee">$0.00</span></div>
+      <div class="summary-row total"><span class="lbl">You'll Get</span><span class="val" id="depTotal">$0.00</span></div>
     </div>
     <button class="modal-confirm deposit" onclick="confirmDeposit()">Confirm Deposit</button>
   </div>
@@ -346,7 +407,7 @@ body{background:#0a0e1a;color:#e0e6f0;overflow-x:hidden;min-height:100vh}
     </div>
     <div class="modal-section">
       <div class="modal-label">Available Balance</div>
-      <div style="font-size:1.3rem;font-weight:700;color:#10b981" id="wdAvailable">\$10,000.00</div>
+      <div style="font-size:1.3rem;font-weight:700;color:#10b981" id="wdAvailable">$10,000.00</div>
     </div>
     <div class="modal-section">
       <div class="modal-label">Asset</div>
@@ -383,8 +444,8 @@ body{background:#0a0e1a;color:#e0e6f0;overflow-x:hidden;min-height:100vh}
       </div>
     </div>
     <div class="modal-summary">
-      <div class="summary-row"><span class="lbl">Network Fee</span><span class="val" id="wdFee">\$0.00</span></div>
-      <div class="summary-row total"><span class="lbl">You'll Receive</span><span class="val" id="wdReceive">\$0.00</span></div>
+      <div class="summary-row"><span class="lbl">Network Fee</span><span class="val" id="wdFee">$0.00</span></div>
+      <div class="summary-row total"><span class="lbl">You'll Receive</span><span class="val" id="wdReceive">$0.00</span></div>
     </div>
     <button class="modal-confirm withdraw" onclick="confirmWithdraw()">Confirm Withdraw</button>
   </div>
@@ -393,51 +454,106 @@ body{background:#0a0e1a;color:#e0e6f0;overflow-x:hidden;min-height:100vh}
 <div id="toast" class="toast"><div class="toast-icon" id="toastIcon"></div><div class="toast-msg" id="toastMsg"></div></div>
 
 <script>
-let currentAccount = null, currentPair = 'BTC/USDT', currentSide = 'buy', currentPrice = 67423;
+let currentAccount = null, currentPair = 'BTC/USDT', currentSide = 'buy', currentPrice = 0, isDemo = true;
 let chart, candleSeries;
 let portfolio = { USDT: 10000, BTC: 0, ETH: 0, BNB: 0, SOL: 0 };
 let transactions = [];
 let stats = { trades: 0, volume: 0 };
 let selectedMethod = 'card';
+let signinNonce = '', signinMessage = '';
+let realPrices = {};
 
-const pairData = {
-  'BTC/USDT': { base: 'BTC', quote: 'USDT', price: 67423, change: 2.4 },
-  'ETH/USDT': { base: 'ETH', quote: 'USDT', price: 3521, change: 1.8 },
-  'BNB/USDT': { base: 'BNB', quote: 'USDT', price: 612, change: -0.5 },
-  'SOL/USDT': { base: 'SOL', quote: 'USDT', price: 178, change: 5.2 },
-  'XRP/USDT': { base: 'XRP', quote: 'USDT', price: 0.52, change: -1.2 }
+const pairMap = {
+  'BTC/USDT': { id: 'bitcoin', base: 'BTC', quote: 'USDT' },
+  'ETH/USDT': { id: 'ethereum', base: 'ETH', quote: 'USDT' },
+  'BNB/USDT': { id: 'binancecoin', base: 'BNB', quote: 'USDT' },
+  'SOL/USDT': { id: 'solana', base: 'SOL', quote: 'USDT' },
+  'XRP/USDT': { id: 'ripple', base: 'XRP', quote: 'USDT' }
 };
+
+const STORAGE_KEY = 'nexcrypto_session';
 
 function init() {
   renderPairs();
   setPair('BTC/USDT');
   initChart();
-  generateCandles();
-  renderOrderBook();
-  renderPortfolio();
-  renderTrades();
-  renderProfile();
-  renderTxnHistory();
-  setInterval(() => { updatePrices(); renderOrderBook(); renderPortfolio(); renderTrades(); }, 3000);
-  setInterval(updateChart, 2000);
+  loadSession();
+  fetchPrices();
+  setInterval(fetchPrices, 30000);
+  setInterval(updateChart, 5000);
+  setTimeout(() => document.getElementById('loading').classList.add('hide'), 500);
+}
+
+function loadSession() {
+  try {
+    const session = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+    if (session && session.address) {
+      const age = Date.now() - session.timestamp;
+      if (age < 7 * 24 * 60 * 60 * 1000) {
+        currentAccount = session.address;
+        showConnectedUI(session.address, false);
+        showToast(`Welcome back! 👋 ${currentAccount.slice(0,6)}...${currentAccount.slice(-4)}`, 'success');
+      } else {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+  } catch (e) { console.error('Session load error:', e); }
+}
+
+function saveSession(addr) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ address: addr, timestamp: Date.now() }));
+}
+
+function clearSession() {
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+async function fetchPrices() {
+  try {
+    const ids = Object.values(pairMap).map(p => p.id).join(',');
+    const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`);
+    const data = await res.json();
+    Object.keys(pairMap).forEach(pair => {
+      const id = pairMap[pair].id;
+      if (data[id]) {
+        realPrices[pair] = { price: data[id].usd, change: data[id].usd_24h_change || 0 };
+      }
+    });
+    setPair(currentPair);
+    if (currentPrice > 0) generateCandles();
+    renderOrderBook();
+  } catch (e) {
+    console.error('Price fetch error:', e);
+    if (currentPrice === 0) {
+      realPrices['BTC/USDT'] = { price: 95000, change: 2.4 };
+      realPrices['ETH/USDT'] = { price: 3400, change: 1.8 };
+      realPrices['BNB/USDT'] = { price: 720, change: -0.5 };
+      realPrices['SOL/USDT'] = { price: 195, change: 5.2 };
+      realPrices['XRP/USDT'] = { price: 1.4, change: -1.2 };
+      setPair(currentPair);
+    }
+  }
 }
 
 function renderPairs() {
-  document.getElementById('pairs').innerHTML = Object.keys(pairData).map(p => 
+  document.getElementById('pairs').innerHTML = Object.keys(pairMap).map(p => 
     `<button class="pair-btn ${p === currentPair ? 'active' : ''}" onclick="setPair('${p}')">${p}</button>`
   ).join('');
 }
 
 function setPair(pair) {
   currentPair = pair;
-  currentPrice = pairData[pair].price;
+  const data = realPrices[pair] || { price: 0, change: 0 };
+  currentPrice = data.price;
   document.getElementById('tPrice').textContent = '$' + currentPrice.toLocaleString(undefined, {maximumFractionDigits: pair.includes('XRP') ? 4 : 2});
-  const ch = pairData[pair].change;
+  const ch = data.change;
   const chEl = document.getElementById('tChange');
   chEl.textContent = (ch >= 0 ? '+' : '') + ch.toFixed(2) + '%';
   chEl.className = 'ticker-change ' + (ch >= 0 ? 'up' : 'down');
-  document.getElementById('inpPrice').value = currentPrice.toFixed(pair.includes('XRP') ? 4 : 2);
-  document.getElementById('amtSuffix').textContent = pairData[pair].base;
+  if (currentPrice > 0) {
+    document.getElementById('inpPrice').value = currentPrice.toFixed(pair.includes('XRP') ? 4 : 2);
+  }
+  document.getElementById('amtSuffix').textContent = pairMap[pair].base;
   document.querySelectorAll('.pair-btn').forEach(b => b.classList.toggle('active', b.textContent === pair));
   updateExecuteBtn();
   updateAvailable();
@@ -453,20 +569,25 @@ function setSide(side) {
 
 function updateExecuteBtn() {
   const btn = document.getElementById('executeBtn');
-  const base = pairData[currentPair].base;
+  const base = pairMap[currentPair].base;
   btn.className = 'execute-btn ' + currentSide;
   btn.textContent = (currentSide === 'buy' ? 'Buy ' : 'Sell ') + base;
 }
 
 function updateAvailable() {
-  const base = pairData[currentPair].base;
+  if (!currentAccount) {
+    document.getElementById('available').textContent = isDemo ? '$10,000.00 (DEMO)' : 'Connect wallet first';
+    return;
+  }
+  const base = pairMap[currentPair].base;
   const avail = currentSide === 'buy' ? portfolio.USDT : portfolio[base] || 0;
   document.getElementById('available').textContent = (currentSide === 'buy' ? '$' : '') + avail.toFixed(4) + (currentSide === 'buy' ? '' : ' ' + base);
 }
 
 function setPercent(p) {
-  const base = pairData[currentPair].base;
+  const base = pairMap[currentPair].base;
   const price = parseFloat(document.getElementById('inpPrice').value) || currentPrice;
+  if (!price) return;
   if (currentSide === 'buy') {
     const max = portfolio.USDT / price;
     document.getElementById('inpAmount').value = (max * p / 100).toFixed(6);
@@ -480,7 +601,10 @@ function setPercent(p) {
 function updateTotal() {
   const price = parseFloat(document.getElementById('inpPrice').value) || 0;
   const amount = parseFloat(document.getElementById('inpAmount').value) || 0;
-  document.getElementById('inpTotal').textContent = (price * amount).toFixed(2) + ' USDT';
+  const total = price * amount;
+  const fee = total * 0.001;
+  document.getElementById('inpTotal').textContent = total.toFixed(2) + ' USDT';
+  document.getElementById('inpFee').textContent = fee.toFixed(2) + ' USDT';
 }
 
 document.getElementById('inpAmount')?.addEventListener('input', updateTotal);
@@ -488,27 +612,67 @@ document.getElementById('inpPrice')?.addEventListener('input', updateTotal);
 document.getElementById('depositAmount')?.addEventListener('input', updateDepositSummary);
 document.getElementById('wdAmount')?.addEventListener('input', updateWithdrawSummary);
 
+function toggleDemo() {
+  if (!currentAccount) { showToast('Connect wallet dulu!', 'error'); return; }
+  isDemo = !isDemo;
+  const toggle = document.getElementById('demoToggle');
+  const label = document.getElementById('demoLabel');
+  const mode = document.getElementById('portMode');
+  if (isDemo) {
+    toggle.classList.add('active');
+    label.textContent = 'DEMO';
+    mode.textContent = 'DEMO';
+    mode.className = 'port-mode';
+    portfolio = { USDT: 10000, BTC: 0, ETH: 0, BNB: 0, SOL: 0 };
+    showToast('Demo mode ON - Saldo simulasi $10K', 'info');
+  } else {
+    toggle.classList.remove('active');
+    label.textContent = 'REAL';
+    mode.textContent = 'REAL';
+    mode.className = 'port-mode real';
+    portfolio = { USDT: 0, BTC: 0, ETH: 0, BNB: 0, SOL: 0 };
+    showToast('Real mode - Cek saldo wallet asli...', 'info');
+    fetchRealBalances();
+  }
+  renderPortfolio();
+  updateAvailable();
+}
+
+async function fetchRealBalances() {
+  if (!currentAccount || typeof window.ethereum === 'undefined') return;
+  try {
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const bal = await provider.getBalance(currentAccount);
+    const ethBal = parseFloat(ethers.formatEther(bal));
+    portfolio.ETH = ethBal;
+    if (ethBal === 0) showToast('Saldo ETH 0 - Deposit dulu buat trading', 'error');
+    renderPortfolio();
+  } catch (e) { console.error('Balance fetch error:', e); }
+}
+
 function executeTrade() {
-  if (!currentAccount) { showToast('Connect wallet dulu! 🔐', 'error'); return; }
-  const base = pairData[currentPair].base;
+  if (!currentAccount) { showToast('Connect & sign in dulu! 🔐', 'error'); return; }
+  const base = pairMap[currentPair].base;
   const price = parseFloat(document.getElementById('inpPrice').value) || 0;
   const amount = parseFloat(document.getElementById('inpAmount').value) || 0;
   if (amount <= 0) { showToast('Masukkan amount!', 'error'); return; }
+  if (price <= 0) { showToast('Harga belum tersedia, tunggu sebentar...', 'error'); return; }
   const total = price * amount;
-  if (currentSide === 'buy' && total > portfolio.USDT) { showToast('Saldo USDT tidak cukup!', 'error'); return; }
+  const fee = total * 0.001;
+  if (currentSide === 'buy' && (total + fee) > portfolio.USDT) { showToast('Saldo USDT tidak cukup!', 'error'); return; }
   if (currentSide === 'sell' && amount > (portfolio[base] || 0)) { showToast(`Saldo ${base} tidak cukup!`, 'error'); return; }
   
   if (currentSide === 'buy') {
-    portfolio.USDT -= total;
+    portfolio.USDT -= (total + fee);
     portfolio[base] = (portfolio[base] || 0) + amount;
   } else {
-    portfolio.USDT += total;
+    portfolio.USDT += (total - fee);
     portfolio[base] = (portfolio[base] || 0) - amount;
   }
   
   stats.trades++;
   stats.volume += total;
-  addTransaction({ type: currentSide, pair: currentPair, amount, price, total });
+  addTransaction({ type: currentSide, pair: currentPair, amount, price, total, fee });
   
   document.getElementById('inpAmount').value = '';
   updateTotal();
@@ -541,37 +705,38 @@ function initChart() {
 }
 
 function generateCandles() {
-  if (!candleSeries) return;
+  if (!candleSeries || currentPrice <= 0) return;
   const data = [];
   let price = currentPrice * 0.95;
   const now = Math.floor(Date.now() / 1000);
   for (let i = 200; i >= 0; i--) {
     const t = now - i * 300;
     const open = price;
-    const close = open + (Math.random() - 0.48) * open * 0.01;
-    const high = Math.max(open, close) + Math.random() * open * 0.005;
-    const low = Math.min(open, close) - Math.random() * open * 0.005;
+    const volatility = open * 0.005;
+    const close = open + (Math.random() - 0.48) * volatility;
+    const high = Math.max(open, close) + Math.random() * volatility * 0.5;
+    const low = Math.min(open, close) - Math.random() * volatility * 0.5;
     data.push({ time: t, open, high, low, close });
     price = close;
   }
-  currentPrice = price;
   candleSeries.setData(data);
   chart.timeScale().fitContent();
 }
 
 function updateChart() {
-  if (!candleSeries) return;
-  const lastTime = Math.floor(Date.now() / 1000);
+  if (!candleSeries || currentPrice <= 0) return;
   const data = candleSeries.data();
   if (data && data.length > 0) {
     const last = data[data.length - 1];
-    const close = last.close + (Math.random() - 0.48) * last.close * 0.002;
-    candleSeries.update({ time: lastTime, open: last.close, high: Math.max(last.close, close), low: Math.min(last.close, close), close });
+    const volatility = last.close * 0.002;
+    const close = last.close + (Math.random() - 0.48) * volatility;
+    candleSeries.update({ time: Math.floor(Date.now() / 1000), open: last.close, high: Math.max(last.close, close), low: Math.min(last.close, close), close });
   }
 }
 
 function renderOrderBook() {
-  const base = pairData[currentPair].price;
+  if (currentPrice <= 0) return;
+  const base = currentPrice;
   const sell = [], buy = [];
   for (let i = 5; i >= 1; i--) sell.push({ p: base + i * (base * 0.0005), a: Math.random() * 2 });
   for (let i = 1; i <= 5; i++) buy.push({ p: base - i * (base * 0.0005), a: Math.random() * 2 });
@@ -586,24 +751,32 @@ function renderOrderBook() {
     return `<div class="ob-row buy"><div class="bar-bg" style="width:${(o.a/2)*100}%"></div><span class="ob-price">${o.p.toFixed(2)}</span><span>${o.a.toFixed(4)}</span><span style="text-align:right">${total.toFixed(2)}</span></div>`;
   }).join('');
   
-  document.getElementById('obSpread').textContent = (sell[4].p - buy[0].p).toFixed(2) + ' USDT';
+  const spread = sell[4].p - buy[0].p;
+  const spreadPct = (spread / base * 100).toFixed(3);
+  document.getElementById('obSpread').textContent = spread.toFixed(2) + ' USDT';
+  document.getElementById('spreadPct').textContent = spreadPct + '%';
 }
 
 function renderPortfolio() {
-  const total = portfolio.USDT + (portfolio.BTC || 0) * pairData['BTC/USDT'].price + (portfolio.ETH || 0) * pairData['ETH/USDT'].price + (portfolio.BNB || 0) * pairData['BNB/USDT'].price + (portfolio.SOL || 0) * pairData['SOL/USDT'].price;
+  const btcVal = (portfolio.BTC || 0) * (realPrices['BTC/USDT']?.price || 0);
+  const ethVal = (portfolio.ETH || 0) * (realPrices['ETH/USDT']?.price || 0);
+  const bnbVal = (portfolio.BNB || 0) * (realPrices['BNB/USDT']?.price || 0);
+  const solVal = (portfolio.SOL || 0) * (realPrices['SOL/USDT']?.price || 0);
+  const total = portfolio.USDT + btcVal + ethVal + bnbVal + solVal;
   document.getElementById('portBalance').textContent = '$' + total.toFixed(2);
   document.getElementById('portList').innerHTML = Object.entries(portfolio).filter(([k, v]) => v > 0).map(([k, v]) => {
     return `<div class="port-asset"><span class="port-asset-name">${k}</span><span class="port-asset-val">${v.toFixed(6)}</span></div>`;
   }).join('') || '<div class="empty-state">No assets yet</div>';
+  document.getElementById('ddBalance').textContent = '$' + total.toFixed(2);
 }
 
 let tradeHistory = [];
 function renderTrades() {
-  if (tradeHistory.length < 8) {
+  if (tradeHistory.length < 8 && currentPrice > 0) {
     for (let i = 0; i < 8; i++) {
       const side = Math.random() > 0.5 ? 'buy' : 'sell';
       tradeHistory.push({
-        side, price: pairData[currentPair].price * (1 + (Math.random() - 0.5) * 0.001),
+        side, price: currentPrice * (1 + (Math.random() - 0.5) * 0.001),
         amount: Math.random() * 0.5, time: new Date(Date.now() - i * 60000)
       });
     }
@@ -614,42 +787,116 @@ function renderTrades() {
   }).join('');
 }
 
-function updatePrices() {
-  Object.keys(pairData).forEach(p => {
-    pairData[p].price *= 1 + (Math.random() - 0.48) * 0.002;
-  });
-  if (currentPair === 'BTC/USDT' || Math.random() > 0.7) {
-    setPair(currentPair);
+async function connectWallet() {
+  if (typeof window.ethereum === 'undefined') {
+    showToast('MetaMask belum terinstall! Install dulu di metamask.io', 'error');
+    setTimeout(() => window.open('https://metamask.io/download/', '_blank'), 2000);
+    return;
+  }
+  try {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    if (!accounts || accounts.length === 0) throw new Error('No accounts');
+    currentAccount = accounts[0];
+    signinNonce = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    signinMessage = `Welcome to NexCrypto!\n\nClick to sign in. This signature proves you own this wallet and doesn't trigger any transaction.\n\nWallet: ${currentAccount}\nNonce: ${signinNonce}\nTimestamp: ${new Date().toISOString()}`;
+    document.getElementById('signinMsg').innerHTML = `<strong>Message to sign:</strong>\n\n${signinMessage}\n\n<em style="color:#10b981">✓ Free • No gas fee • Just verification</em>`;
+    document.getElementById('signinModal').classList.add('active');
+  } catch (e) {
+    console.error('Connect error:', e);
+    showToast('Gagal konek wallet: ' + (e.message || 'Unknown error'), 'error');
   }
 }
 
-let priceInterval;
-function startLiveUpdate() {
-  if (priceInterval) clearInterval(priceInterval);
-  priceInterval = setInterval(() => {
-    pairData[currentPair].price *= 1 + (Math.random() - 0.48) * 0.001;
-    currentPrice = pairData[currentPair].price;
-    document.getElementById('tPrice').textContent = '$' + currentPrice.toLocaleString(undefined, {maximumFractionDigits: currentPair.includes('XRP') ? 4 : 2});
-  }, 1500);
+async function signIn() {
+  const btn = document.getElementById('signinBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Signing...';
+  try {
+    const signer = await new ethers.BrowserProvider(window.ethereum).getSigner();
+    const signature = await signer.signMessage(signinMessage);
+    const recoveredAddress = ethers.verifyMessage(signinMessage, signature);
+    if (recoveredAddress.toLowerCase() === currentAccount.toLowerCase()) {
+      saveSession(currentAccount);
+      showConnectedUI(currentAccount, true);
+      closeModal('signinModal');
+      showToast(`Welcome to NexCrypto! 🎉\n${currentAccount.slice(0,6)}...${currentAccount.slice(-4)}`, 'success');
+    } else {
+      throw new Error('Signature verification failed');
+    }
+  } catch (e) {
+    console.error('Sign in error:', e);
+    if (e.code === 'ACTION_REJECTED') {
+      showToast('Sign in dibatalkan', 'error');
+    } else {
+      showToast('Sign in gagal: ' + (e.message || 'Unknown error'), 'error');
+    }
+    currentAccount = null;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✍️ Sign Message';
+  }
+}
+
+function showConnectedUI(addr, isNewLogin) {
+  document.getElementById('connectBtn').style.display = 'none';
+  document.getElementById('walletConnected').style.display = 'flex';
+  document.getElementById('walletAddr').textContent = addr.slice(0,6) + '...' + addr.slice(-4);
+  document.getElementById('ddAddr').textContent = addr;
+  document.getElementById('profileName').textContent = 'Trader ' + addr.slice(2, 6).toUpperCase();
+  document.getElementById('profileAddr').textContent = addr.slice(0,10) + '...' + addr.slice(-8);
+  document.getElementById('profileAvatar').textContent = addr.slice(2, 4).toUpperCase();
+  document.getElementById('profileGreeting').textContent = isNewLogin ? '🎉 Welcome!' : '👋 Welcome back!';
+  updateAvailable();
+  renderProfile();
+  if (!isNewLogin) fetchRealBalances();
+}
+
+function toggleDropdown() { document.getElementById('walletDropdown').classList.toggle('active'); }
+
+function copyAddress() { 
+  if (!currentAccount) return; 
+  navigator.clipboard.writeText(currentAccount); 
+  showToast('Address copied! 📋', 'success'); 
+  document.getElementById('walletDropdown').classList.remove('active');
+}
+
+function viewOnExplorer() {
+  if (!currentAccount) return;
+  window.open(`https://etherscan.io/address/${currentAccount}`, '_blank');
+  document.getElementById('walletDropdown').classList.remove('active');
+}
+
+function disconnectWallet() { 
+  currentAccount = null; 
+  clearSession();
+  document.getElementById('connectBtn').style.display = 'block'; 
+  document.getElementById('walletConnected').style.display = 'none'; 
+  document.getElementById('walletDropdown').classList.remove('active');
+  showToast('Disconnected 👋', 'info'); 
+  updateAvailable();
+  document.getElementById('profileName').textContent = 'Guest Trader';
+  document.getElementById('profileAddr').textContent = 'Not connected';
+  document.getElementById('profileAvatar').textContent = '?';
+  document.getElementById('profileGreeting').textContent = '';
 }
 
 function openProfile() {
+  if (!currentAccount) { showToast('Connect & sign in dulu!', 'error'); return; }
   document.getElementById('profileModal').classList.add('active');
   renderProfile();
   renderTxnHistory();
 }
 
 function openDeposit() {
-  if (!currentAccount) { showToast('Connect wallet dulu!', 'error'); return; }
+  if (!currentAccount) { showToast('Sign in dulu!', 'error'); return; }
   document.getElementById('depositAmount').value = '';
   updateDepositSummary();
   document.getElementById('depositModal').classList.add('active');
 }
 
 function openWithdraw() {
-  if (!currentAccount) { showToast('Connect wallet dulu!', 'error'); return; }
-  const usdVal = portfolio.USDT;
-  document.getElementById('wdAvailable').textContent = '$' + usdVal.toFixed(2);
+  if (!currentAccount) { showToast('Sign in dulu!', 'error'); return; }
+  document.getElementById('wdAvailable').textContent = '$' + portfolio.USDT.toFixed(2);
   document.getElementById('wdAmount').value = '';
   document.getElementById('wdAddress').value = '';
   updateWithdrawSummary();
@@ -695,7 +942,7 @@ function updateWithdrawSummary() {
 
 function confirmDeposit() {
   const amt = parseFloat(document.getElementById('depositAmount').value) || 0;
-  if (amt < 10) { showToast('Minimum deposit \$10', 'error'); return; }
+  if (amt < 10) { showToast('Minimum deposit $10', 'error'); return; }
   const fees = { card: 0.029, bank: 0.01, crypto: 0.005 };
   const total = amt - (amt * (fees[selectedMethod] || 0));
   portfolio.USDT += total;
@@ -711,7 +958,7 @@ function confirmWithdraw() {
   const amt = parseFloat(document.getElementById('wdAmount').value) || 0;
   const addr = document.getElementById('wdAddress').value.trim();
   const asset = document.getElementById('wdAsset').value;
-  if (amt < 10) { showToast('Minimum withdraw \$10', 'error'); return; }
+  if (amt < 10) { showToast('Minimum withdraw $10', 'error'); return; }
   if (!addr || !addr.startsWith('0x') || addr.length !== 42) { showToast('Invalid wallet address!', 'error'); return; }
   if (amt > portfolio.USDT) { showToast('Insufficient balance!', 'error'); return; }
   const fee = amt * 0.001;
@@ -731,15 +978,6 @@ function addTransaction(txn) {
 }
 
 function renderProfile() {
-  if (currentAccount) {
-    document.getElementById('profileName').textContent = 'Trader ' + currentAccount.slice(2, 6).toUpperCase();
-    document.getElementById('profileAddr').textContent = currentAccount.slice(0,10) + '...' + currentAccount.slice(-8);
-    document.getElementById('profileAvatar').textContent = currentAccount.slice(2, 4).toUpperCase();
-  } else {
-    document.getElementById('profileName').textContent = 'Guest Trader';
-    document.getElementById('profileAddr').textContent = 'Not connected';
-    document.getElementById('profileAvatar').textContent = '?';
-  }
   document.getElementById('statTrades').textContent = stats.trades;
   document.getElementById('statVolume').textContent = '$' + stats.volume.toFixed(0);
   let rank = '🥉', rankText = 'Bronze';
@@ -761,4 +999,41 @@ function renderTxnHistory() {
     } else if (t.type === 'withdraw') {
       return `<div class="txn-row"><div class="txn-left"><div class="txn-icon wd">↑</div><div><div class="txn-info-main">Withdraw</div><div class="txn-info-sub">${t.asset} • ${time}</div></div></div><div class="txn-amount negative">-$${t.amount.toFixed(2)}</div></div>`;
     } else {
-      return `<div class="txn-row"><div class="txn-left"><div class="txn-icon trade">⇄</div><div><div class="txn-info-main">${t.type === 'buy' ? 'Buy' : 'Sell'} ${t.pair.split('/')[0]}</div><div class="txn-info-sub">${t.amount.toFixed(4)} @ ${t.price.toFixed(2)} • ${time}</div></div></div><div class="txn-amount ${t.type === 'buy' ? 'negative
+      return `<div class="txn-row"><div class="txn-left"><div class="txn-icon trade">⇄</div><div><div class="txn-info-main">${t.type === 'buy' ? 'Buy' : 'Sell'} ${t.pair.split('/')[0]}</div><div class="txn-info-sub">${t.amount.toFixed(4)} @ ${t.price.toFixed(2)} • ${time}</div></div></div><div class="txn-amount ${t.type === 'buy' ? 'negative' : 'positive'}">${t.type === 'buy' ? '-' : '+'}$${t.total.toFixed(2)}</div></div>`;
+    }
+  }).join('');
+}
+
+document.addEventListener('click', e => { 
+  if (!e.target.closest('.wallet-connected')) document.getElementById('walletDropdown')?.classList.remove('active'); 
+  if (!e.target.closest('.modal') && !e.target.closest('.profile-btn') && !e.target.closest('.p-action') && !e.target.closest('.port-action')) {
+    document.querySelectorAll('.modal-bg').forEach(m => m.classList.remove('active'));
+  }
+});
+
+if (window.ethereum) { 
+  window.ethereum.on('accountsChanged', a => { 
+    if (!a.length) disconnectWallet(); 
+    else if (a[0].toLowerCase() !== currentAccount?.toLowerCase()) {
+      clearSession();
+      currentAccount = a[0];
+      showConnectedUI(a[0], false);
+      showToast('Account switched 🔄', 'info');
+    }
+  }); 
+  window.ethereum.on('chainChanged', () => location.reload()); 
+}
+
+function showToast(msg, type = 'info') {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').innerHTML = msg.replace(/\n/g, '<br>');
+  const icons = { success: '✓', error: '✕', info: 'ℹ' };
+  document.getElementById('toastIcon').innerHTML = icons[type] || icons.info;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+window.addEventListener('load', init);
+</script>
+</body>
+</html>
