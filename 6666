@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NexCrypto — Trade Smarter, Earn More</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: #0a0e1a;
+    color: #e0e6f0;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  .bg-glow {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(99, 102, 241, .25), transparent 40%),
+      radial-gradient(circle at 80% 60%, rgba(236, 72, 153, .20), transparent 40%),
+      radial-gradient(circle at 50% 90%, rgba(34, 211, 238, .18), transparent 50%);
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 6%; backdrop-filter: blur(16px);
+    background: rgba(10, 14, 26, .7);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    z-index: 100;
+  }
+  .logo { font-size: 1.5rem; font-weight: 800;
+    background: linear-gradient(135deg, #22d3ee, #a855f7);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .nav-links { display: flex; gap: 30px; list-style: none; }
+  .nav-links a { color: #b0b9cc; text-decoration: none; font-weight: 500; transition: .3s; }
+  .nav-links a:hover { color: #22d3ee; }
+  .nav-cta {
+    padding: 10px 22px; border-radius: 30px; border: none; cursor: pointer;
+    background: linear-gradient(135deg, #22d3ee, #a855f7); color: white; font-weight: 600;
+  }
+  .menu-btn { display: none; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 120px 6% 60px; text-align: center;
+  }
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 800;
+    line-height: 1.1; margin-bottom: 24px;
+  }
+  .hero h1 span {
+    background: linear-gradient(135deg, #22d3ee 0%, #a855f7 50%, #ec4899 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p { max-width: 640px; margin: 0 auto 36px; color: #9ba6b8; font-size: 1.15rem; line-height: 1.6; }
+  .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary, .btn-outline {
+    padding: 16px 32px; border-radius: 30px; font-weight: 600; font-size: 1rem;
+    cursor: pointer; transition: all .3s; text-decoration: none; display: inline-block;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #22d3ee, #a855f7);
+    color: white; border: none;
+    box-shadow: 0 8px 24px rgba(168, 85, 247, .35);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(168, 85, 247, .5); }
+  .btn-outline {
+    background: transparent; color: #22d3ee; border: 2px solid #22d3ee;
+  }
+  .btn-outline:hover { background: #22d3ee; color: #0a0e1a; }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px; padding: 40px 6%; max-width: 1200px; margin: 0 auto;
+  }
+  .stat-card {
+    background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+    backdrop-filter: blur(10px); padding: 24px; border-radius: 16px;
+    text-align: center; transition: .3s;
+  }
+  .stat-card:hover { transform: translateY(-4px); border-color: rgba(34,211,238,.4); }
+  .stat-card h3 { color: #9ba6b8; font-size: .9rem; margin-bottom: 8px; font-weight: 500; }
+  .stat-card .val { font-size: 1.6rem; font-weight: 700; color: white; }
+  .stat-card .change { font-size: .85rem; margin-top: 4px; }
+  .up { color: #10b981; }
+  .down { color: #ef4444; }
+
+  /* SECTION TITLE */
+  .section { padding: 80px 6%; }
+  .section-title { text-align: center; margin-bottom: 50px; }
+  .section-title h2 {
+    font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 12px;
+  }
+  .section-title h2 span {
+    background: linear-gradient(135deg, #22d3ee, #a855f7);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .section-title p { color: #9ba6b8; max-width: 600px; margin: 0 auto; }
+
+  /* MARKET TABLE */
+  .market-wrap { max-width: 1200px; margin: 0 auto; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 700px; }
+  th, td { padding: 16px 18px; text-align: left; }
+  th { color: #9ba6b8; font-size: .85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+  tr { border-bottom: 1px solid rgba(255,255,255,.05); transition: .3s; }
+  tbody tr:hover { background: rgba(255,255,255,.03); }
+  .coin-info { display: flex; align-items: center; gap: 12px; }
+  .coin-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; color: white;
+  }
+  .coin-name { font-weight: 600; }
+  .coin-symbol { color: #9ba6b8; font-size: .85rem; }
+  .price { font-weight: 600; }
+  .sparkline { width: 120px; height: 36px; }
+
+  /* CHART SECTION */
+  .chart-section { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 1200px; margin: 0 auto; align-items: center; }
+  .chart-card {
+    background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+    border-radius: 20px; padding: 30px; backdrop-filter: blur(10px);
+  }
+  .chart-card h3 { margin-bottom: 20px; font-size: 1.2rem; }
+  canvas { width: 100% !important; height: 280px !important; }
+
+  /* FEATURES */
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto; }
+  .feature-card {
+    background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+    padding: 32px 24px; border-radius: 20px; transition: all .3s;
+  }
+  .feature-card:hover { transform: translateY(-6px); border-color: rgba(168,85,247,.4); box-shadow: 0 20px 40px rgba(168,85,247,.15); }
+  .feature-icon {
+    width: 56px; height: 56px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, rgba(34,211,238,.2), rgba(168,85,247,.2));
+    border: 1px solid rgba(168,85,247,.3);
+  }
+  .feature-card h3 { margin-bottom: 10px; font-size: 1.2rem; }
+  .feature-card p { color: #9ba6b8; line-height: 1.6; }
+
+  /* NEWSLETTER */
+  .newsletter {
+    max-width: 700px; margin: 0 auto; text-align: center;
+    background: linear-gradient(135deg, rgba(34,211,238,.1), rgba(168,85,247,.1));
+    border: 1px solid rgba(168,85,247,.3); border-radius: 24px; padding: 50px 30px;
+  }
+  .newsletter form { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; justify-content: center; }
+  .newsletter input {
+    flex: 1; min-width: 250px; padding: 14px 20px; border-radius: 30px;
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+    color: white; font-size: 1rem;
+  }
+  .newsletter input:focus { outline: none; border-color: #22d3ee; }
+
+  /* FOOTER */
+  footer {
+    padding: 50px 6% 30px; border-top: 1px solid rgba(255,255,255,.08);
+    margin-top: 80px; text-align: center; color: #9ba6b8;
+  }
+  .footer-links { display: flex; gap: 24px; justify-content: center; margin: 20px 0; flex-wrap: wrap; }
+  .footer-links a { color: #9ba6b8; text-decoration: none; transition: .3s; }
+  .footer-links a:hover { color: #22d3ee; }
+
+  /* TICKER */
+  .ticker {
+    overflow: hidden; background: rgba(255,255,255,.02);
+    border-top: 1px solid rgba(255,255,255,.05);
+    border-bottom: 1px solid rgba(255,255,255,.05);
+    padding: 14px 0; margin: 40px 0;
+  }
+  .ticker-track { display: flex; gap: 50px; animation: scroll 30s linear infinite; white-space: nowrap; }
+  .ticker-item { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; }
+  @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .menu-btn { display: block; }
+    .chart-section { grid-template-columns: 1fr; }
+    .nav-links.open { display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: rgba(10,14,26,.95); padding: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="logo">⬡ NexCrypto</div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#market">Market</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#newsletter">Newsletter</a></li>
+  </ul>
+  <button class="nav-cta">Mulai Trading</button>
+  <button class="menu-btn" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div>
+    <h1>Trade Crypto dengan <span>Kepercayaan Penuh</span></h1>
+    <p>Platform trading crypto paling aman dan cepat. Akses 500+ aset digital dengan likuiditas tinggi dan biaya terendah di industri.</p>
+    <div class="hero-btns">
+      <a href="#" class="btn-primary">🚀 Mulai Sekarang</a>
+      <a href="#market" class="btn-outline">Lihat Market</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-card">
+    <h3>Total Market Cap</h3>
+    <div class="val" id="marketCap">$2.41T</div>
+    <div class="change up">▲ 3.42%</div>
+  </div>
+  <div class="stat-card">
+    <h3>Volume 24 Jam</h3>
+    <div class="val" id="volume">$98.6B</div>
+    <div class="change up">▲ 1.18%</div>
+  </div>
+  <div class="stat-card">
+    <h3>BTC Dominance</h3>
+    <div class="val">52.7%</div>
+    <div class="change down">▼ 0.21%</div>
+  </div>
+  <div class="stat-card">
+    <h3>Active Coins</h3>
+    <div class="val">12,847</div>
+    <div class="change up">▲ 24</div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track" id="ticker"></div>
+</div>
+
+<!-- MARKET TABLE -->
+<section class="section" id="market">
+  <div class="section-title">
+    <h2>Top <span>Cryptocurrencies</span></h2>
+    <p>Harga real-time untuk aset digital terpopuler di pasar</p>
+  </div>
+  <div class="market-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Coin</th>
+          <th>Harga</th>
+          <th>24h %</th>
+          <th>Market Cap</th>
+          <th>Volume</th>
+          <th>Chart</th>
+        </tr>
+      </thead>
+      <tbody id="coinTable"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- CHART -->
+<section class="section">
+  <div class="chart-section">
+    <div>
+      <h2 style="font-size:2rem;margin-bottom:16px">Bitcoin <span style="color:#9ba6b8;font-size:1rem">(BTC)</span></h2>
+      <div style="font-size:2.5rem;font-weight:800;margin-bottom:8px" id="btcPrice">$67,420.50</div>
+      <div class="change up" style="font-size:1.1rem;margin-bottom:24px">▲ 4.21% (+$2,724.32)</div>
+      <p style="color:#9ba6b8;line-height:1.7;margin-bottom:24px">Bitcoin terus menunjukkan momentum bullish setelah menembus resistance utama. Analis memprediksi target berikutnya di level $75,000.</p>
+      <div style="display:flex;gap:30px;flex-wrap:wrap">
+        <div><div style="color:#9ba6b8;font-size:.85rem">High 24h</div><div style="font-weight:700">$68,210</div></div>
+        <div><div style="color:#9ba6b8;font-size:.85rem">Low 24h</div><div style="font-weight:700">$64,580</div></div>
+        <div><div style="color:#9ba6b8;font-size:.85rem">All-Time High</div><div style="font-weight:700">$73,737</div></div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h3>📈 Pergerakan Harga (7 Hari)</h3>
+      <canvas id="mainChart"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="section-title">
+    <h2>Mengapa <span>NexCrypto</span>?</h2>
+    <p>Keamanan, kecepatan, dan fitur profesional untuk trader pemula hingga expert</p>
+  </div>
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3>Keamanan Tingkat Bank</h3>
+      <p>Aset disimpan dalam cold storage dengan enkripsi multi-layer dan autentikasi 2FA.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>Eksekusi Super Cepat</h3>
+      <p>Engine matching order kami memproses hingga 1,4 juta transaksi per detik.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💎</div>
+      <h3>Biaya Terendah</h3>
+      <p>Mulai dari 0,1% per transaksi. Diskon tambahan untuk pengguna VIP & staking.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌐</div>
+      <h3>500+ Aset Digital</h3>
+      <p>Akses Bitcoin, Ethereum, dan ribuan altcoin emerging dalam satu platform.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Tools Pro Trading</h3>
+      <p>Chart advanced, indikator teknis, dan bot trading otomatis untuk analisis mendalam.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎧</div>
+      <h3>Support 24/7</h3>
+      <p>Tim customer service profesional siap membantu Anda kapanpun, dimanapun.</p>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="section" id="newsletter">
+  <div class="newsletter">
+    <h2 style="font-size:2rem;margin-bottom:12px">📬 Dapatkan Update Market</h2>
+    <p style="color:#9ba6b8">Subscribe newsletter kami dan dapatkan analisis crypto mingguan langsung ke inbox Anda.</p>
+    <form onsubmit="event.preventDefault(); alert('Terima kasih telah subscribe! 🎉'); this.reset();">
+      <input type="email" placeholder="Masukkan email Anda..." required>
+      <button type="submit" class="btn-primary">Subscribe</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo" style="margin-bottom:10px">⬡ NexCrypto</div>
+  <p>Platform trading crypto terpercaya untuk masa depan finansial Anda.</p>
+  <div class="footer-links">
+    <a href="#">Tentang Kami</a>
+    <a href="#">Karir</a>
+    <a href="#">Blog</a>
+    <a href="#">Kebijakan Privasi</a>
+    <a href="#">Syarat & Ketentuan</a>
+  </div>
+  <p style="margin-top:20px;font-size:.9rem">© 2026 NexCrypto. Dibuat dengan ❤️ untuk komunitas crypto Indonesia.</p>
+</footer>
+
+<script>
+  // COIN DATA
+  const coins = [
+    { rank: 1, name: 'Bitcoin', sym: 'BTC', price: 67420.50, change: 4.21, cap: '1.32T', vol: '32.4B', color: '#f7931a', data: [60,62,58,65,68,70,67] },
+    { rank: 2, name: 'Ethereum', sym: 'ETH', price: 3520.80, change: 2.84, cap: '423B', vol: '18.7B', color: '#627eea', data: [45,48,50,47,52,55,53] },
+    { rank: 3, name: 'Tether', sym: 'USDT', price: 1.00, change: 0.01, cap: '118B', vol: '54.2B', color: '#26a17b', data: [50,50,50,50,50,50,50] },
+    { rank: 4, name: 'Solana', sym: 'SOL', price: 178.32, change: -1.42, cap: '82.4B', vol: '4.1B', color: '#14f195', data: [55,60,58,52,48,45,47] },
+    { rank: 5, name: 'BNB', sym: 'BNB', price: 612.50, change: 3.15, cap: '89.2B', vol: '2.8B', color: '#f0b90b', data: [42,45,48,50,52,55,58] },
+    { rank: 6, name: 'XRP', sym: 'XRP', price: 0.5234, change: -0.87, cap: '28.9B', vol: '1.4B', color: '#23292f', data: [50,48,45,43,46,48,45] },
+    { rank: 7, name: 'Cardano', sym: 'ADA', price: 0.4521, change: 5.62, cap: '16.2B', vol: '820M', color: '#0033ad', data: [38,42,45,48,52,55,58] },
+    { rank: 8, name: 'Dogecoin', sym: 'DOGE', price: 0.1245, change: 7.34, cap: '18.1B', vol: '1.9B', color: '#c2a633', data: [35,38,45,50,55,60,65] },
+  ];
+
+  // RENDER TABLE
+  const tbody = document.getElementById('coinTable');
+  coins.forEach(c => {
+    const isUp = c.change >= 0;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${c.rank}</td>
+      <td>
+        <div class="coin-info">
+          <div class="coin-icon" style="background:${c.color}">${c.sym.charAt(0)}</div>
+          <div>
+            <div class="coin-name">${c.name}</div>
+            <div class="coin-symbol">${c.sym}</div>
+          </div>
+        </div>
+      </td>
+      <td class="price">$${c.price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 4})}</td>
+      <td class="${isUp ? 'up' : 'down'}">${isUp ? '▲' : '▼'} ${Math.abs(c.change)}%</td>
+      <td>$${c.cap}</td>
+      <td>$${c.vol}</td>
+      <td><canvas class="sparkline" data-values="${c.data.join(',')}" data-color="${isUp ? '#10b981' : '#ef4444'}"></canvas></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // SPARKLINE
+  function drawSparkline(canvas) {
+    const ctx = canvas.getContext('2d');
+    const values = canvas.dataset.values.split(',').map(Number);
+    const color = canvas.dataset.color;
+    const w = canvas.width = 120;
+    const h = canvas.height = 36;
+    const max = Math.max(...values), min = Math.min(...values);
+    const range = max - min || 1;
+    const stepX = w / (values.length - 1);
+    ctx.beginPath();
+    values.forEach((v, i) => {
+      const x = i * stepX;
+      const y = h - ((v - min) / range) * h;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // gradient fill
+    const grad = ctx.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, color + '60');
+    grad.addColorStop(1, color + '00');
+    ctx.lineTo(w, h);
+    ctx.lineTo(0, h);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+  }
+  document.querySelectorAll('.sparkline').forEach(drawSparkline);
+
+  // MAIN CHART
+  const mainCanvas = document.getElementById('mainChart');
+  const ctx = mainCanvas.getContext('2d');
+  const data = [62000, 64500, 63800, 65200, 66800, 67400, 67420];
+  function drawMainChart() {
+    const w = mainCanvas.width = mainCanvas.offsetWidth;
+    const h = mainCanvas.height = 280;
+    const max = Math.max(...data), min = Math.min(...data);
+    const range = max - min;
+    const stepX = w / (data.length - 1);
+    // grid
+    ctx.strokeStyle = 'rgba(255,255,255,.05)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 5; i++) {
+      const y = (h / 4) * i;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+    }
+    // line
+    ctx.beginPath();
+    data.forEach((v, i) => {
+      const x = i * stepX;
+      const y = h - 30 - ((v - min) / range) * (h - 60);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    const grad = ctx.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, '#22d3ee');
+    grad.addColorStop(1, '#a855f7');
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 3;
+    ctx.shadowBlur = 12;
+    ctx.shadowColor = '#a855f7';
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    // fill
+    ctx.lineTo(w, h);
+    ctx.lineTo(0, h);
+    ctx.closePath();
+    const fillGrad = ctx.createLinearGradient(0, 0, 0, h);
+    fillGrad.addColorStop(0, 'rgba(168,85,247,.4)');
+    fillGrad.addColorStop(1, 'rgba(34,211,238,0)');
+    ctx.fillStyle = fillGrad;
+    ctx.fill();
+    // points
+    data.forEach((v, i) => {
+      const x = i * stepX;
+      const y = h - 30 - ((v - min) / range) * (h - 60);
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = i === data.length - 1 ? '#22d3ee' : '#a855f7';
+      ctx.fill();
+      if (i === data.length - 1) {
+        ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(34,211,238,.3)';
+        ctx.fill();
+      }
+    });
+  }
+  drawMainChart();
+  window.addEventListener('resize', drawMainChart);
+
+  // TICKER
+  const ticker = document.getElementById('ticker');
+  const tickerItems = coins.map(c =>
+    `<div class="ticker-item">
+      <span style="color:${c.color}">●</span>
+      <span>${c.sym}</span>
+      <span>$${c.price.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+      <span class="${c.change >= 0 ? 'up' : 'down'}">${c.change >= 0 ? '▲' : '▼'} ${Math.abs(c.change)}%</span>
+    </div>`
+  ).join('');
+  ticker.innerHTML = tickerItems + tickerItems; // duplicate for seamless loop
+
+  // LIVE PRICE UPDATE (simulasi)
+  setInterval(() => {
+    coins.forEach(c => {
+      const drift = (Math.random() - 0.5) * 0.002;
+      c.price = c.price * (1 + drift);
+    });
+    document.getElementById('btcPrice').textContent = '$' + coins[0].price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  }, 3000);
+</script>
+</body>
+</html>
